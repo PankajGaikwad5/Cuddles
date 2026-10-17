@@ -485,7 +485,7 @@ async function handlePost(req, res, url) {
 // theme's built-in fallback.
 const STORE_PAGES = ['contact', 'faq', 'shipping-returns'];
 function routePage(url, query) {
-  const ctx = (name, extra = {}) => ({ name, ctx: { template: { name: name.split('/').pop() }, request: { locale: { iso_code: 'en' }, origin: ORIGIN, page_type: name.split('/').pop() }, canonical_url: ORIGIN + url, ...extra } });
+  const ctx = (name, extra = {}) => ({ name, ctx: { template: { name: name.split('/').pop().split('.')[0], suffix: name.split('.')[1] || null, directory: name.includes('/') ? name.split('/')[0] : null }, request: { locale: { iso_code: 'en' }, origin: ORIGIN, page_type: name.split('/').pop().split('.')[0] }, canonical_url: ORIGIN + url, ...extra } });
   let m;
 
   // Alternate templates via ?view= (e.g. /?view=about -> templates/index.about.json), like Shopify.

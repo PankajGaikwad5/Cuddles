@@ -52,7 +52,7 @@
     {{ content_for_header }}
   </head>
 
-  <body class="template-{{ template.name }}">
+  <body class="template-{{ template.name }}{% if template.suffix != blank %}--{{ template.suffix }}{% endif %}">
     <a class="skip-link" href="#MainContent">Skip to content</a>
     {% section 'header' %}
 
