@@ -25,6 +25,8 @@
         --color-bg: {{ settings.color_background }};
         --color-text: {{ settings.color_text }};
         --color-accent: {{ settings.color_accent }};
+        --product-ratio: {{ settings.product_image_ratio | default: '1 / 1' }};
+        --product-fit: {{ settings.product_image_fit | default: 'contain' }};
       }
     </style>
     {{ 'base.css' | asset_url | stylesheet_tag }}

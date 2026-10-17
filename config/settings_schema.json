@@ -31,6 +31,48 @@
     ]
   },
   {
+    "name": "Product images",
+    "settings": [
+      {
+        "type": "select",
+        "id": "product_image_ratio",
+        "label": "Image shape",
+        "default": "1 / 1",
+        "info": "Every product card and product page image uses this shape, so rows stay aligned.",
+        "options": [
+          {
+            "value": "1 / 1",
+            "label": "Square"
+          },
+          {
+            "value": "4 / 5",
+            "label": "Portrait"
+          },
+          {
+            "value": "3 / 4",
+            "label": "Tall portrait"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "product_image_fit",
+        "label": "Image fit",
+        "default": "contain",
+        "options": [
+          {
+            "value": "contain",
+            "label": "Show whole image"
+          },
+          {
+            "value": "cover",
+            "label": "Fill shape (may crop)"
+          }
+        ]
+      }
+    ]
+  },
+  {
     "name": "Favicon",
     "settings": [
       {

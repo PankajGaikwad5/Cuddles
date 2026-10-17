@@ -102,6 +102,8 @@
     },
     "social_youtube": "https://youtube.com",
     "social_facebook": "https://facebook.com",
-    "shop_path": "/shop"
+    "shop_path": "/shop",
+    "product_image_ratio": "1 / 1",
+    "product_image_fit": "contain"
   }
 }
