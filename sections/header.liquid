@@ -1,0 +1,135 @@
+
+<header
+  class="site-header{% if section.settings.transparent and template.name == 'index' %} site-header--transparent{% endif %}"
+  data-header
+  style="
+    --header-solid-bg: {{ section.settings.solid_bg }};
+    --header-solid-text: {{ section.settings.solid_text }};
+    --header-top-text: {{ section.settings.top_text }};
+  "
+>
+  <div class="site-header__inner">
+    <button class="site-header__burger" type="button" aria-label="Open menu" aria-expanded="false" data-menu-toggle>
+      <span></span><span></span>
+    </button>
+
+    <nav class="site-header__nav site-header__nav--left" aria-label="Primary">
+      <a href="{{ routes.root_url }}" class="nav-link nav-link--util home-link" aria-label="Home">
+        {% render 'icon', name: 'home' %}
+      </a>
+      {%- for block in section.blocks -%}
+        {%- if block.settings.position == 'left' -%}
+          {% render 'nav-item', title: block.settings.title, url: block.settings.link, mode: block.settings.dropdown, menu: linklists[block.settings.menu], variant: 'desktop' %}
+        {%- endif -%}
+      {%- endfor -%}
+    </nav>
+
+    <a href="{{ routes.root_url }}" class="site-header__logo" aria-label="{{ shop.name }}">
+      {%- liquid
+        if section.settings.logo != blank
+          assign logo_src = section.settings.logo | image_url: width: 600
+        else
+          assign logo_src = section.settings.logo_url
+        endif
+        # Default logo artwork is 1776 × 472.
+        assign logo_ratio = 3.763
+        if section.settings.logo != blank
+          assign logo_ratio = section.settings.logo.aspect_ratio
+        endif
+        assign logo_height = section.settings.logo_width | divided_by: logo_ratio | round
+      -%}
+      {%- if logo_src != blank -%}
+        <span
+          class="logo-img{% if section.settings.logo_tint %} logo-img--tint{% endif %}"
+          style="--logo: url('{{ logo_src }}'); width: {{ section.settings.logo_width }}px;"
+        >
+          <img src="{{ logo_src }}" alt="{{ shop.name | escape }}" width="{{ section.settings.logo_width }}" height="{{ logo_height }}">
+        </span>
+      {%- else -%}
+        <span class="logo-mark">
+          {% render 'icon', name: 'crown' %}
+          <span class="logo-mark__text">{{ section.settings.logo_text }}</span>
+        </span>
+      {%- endif -%}
+    </a>
+
+    <div class="site-header__right">
+      <nav class="site-header__nav site-header__nav--right" aria-label="Secondary">
+        {%- for block in section.blocks -%}
+          {%- if block.settings.position == 'right' -%}
+            {% render 'nav-item', title: block.settings.title, url: block.settings.link, mode: block.settings.dropdown, menu: linklists[block.settings.menu], variant: 'desktop' %}
+          {%- endif -%}
+        {%- endfor -%}
+      </nav>
+
+      <div class="site-header__utils">
+        <a href="{{ routes.cart_url }}" class="nav-link nav-link--util cart-link" aria-label="Bag" data-cart-open>
+          {% render 'icon', name: 'bag' %}
+          <span class="cart-link__count" data-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>{{ cart.item_count }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="mobile-menu" data-mobile-menu hidden>
+    <nav class="mobile-menu__nav">
+      {%- for block in section.blocks -%}
+        {% render 'nav-item', title: block.settings.title, url: block.settings.link, mode: block.settings.dropdown, menu: linklists[block.settings.menu], variant: 'mobile' %}
+      {%- endfor -%}
+      <a href="{{ routes.search_url }}" class="mobile-menu__link mobile-menu__link--util">Search</a>
+      {%- if shop.customer_accounts_enabled -%}
+        <a href="{{ routes.account_url }}" class="mobile-menu__link mobile-menu__link--util">
+          {%- if customer -%}My account{%- else -%}Log in{%- endif -%}
+        </a>
+      {%- endif -%}
+    </nav>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "header", "content": "Logo" },
+    { "type": "image_picker", "id": "logo", "label": "Logo image" },
+    { "type": "text", "id": "logo_url", "label": "Logo URL fallback", "default": "https://res.cloudinary.com/dfpxvbkwt/image/upload/e_trim/v1792226846/white_logo_fvmamm.png" },
+    { "type": "range", "id": "logo_width", "label": "Logo width", "min": 40, "max": 300, "step": 5, "unit": "px", "default": 190 },
+    { "type": "checkbox", "id": "logo_tint", "label": "Recolor logo to match header text", "info": "Use with a single-color logo so it stays visible on the solid header.", "default": true },
+    { "type": "text", "id": "logo_text", "label": "Logo text (used when no image)", "default": "Cuddles" },
+    { "type": "header", "content": "Behaviour" },
+    { "type": "checkbox", "id": "transparent", "label": "Transparent over hero on the homepage, solid on scroll", "default": true },
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "top_text", "label": "Text (transparent state)", "default": "#FFFAE9" },
+    { "type": "color", "id": "solid_bg", "label": "Background (scrolled)", "default": "#FFFAE9" },
+    { "type": "color", "id": "solid_text", "label": "Text (scrolled)", "default": "#805B4B" }
+  ],
+  "max_blocks": 12,
+  "blocks": [
+    {
+      "type": "link",
+      "name": "Link",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Label", "default": "Link" },
+        { "type": "text", "id": "link", "label": "Link address", "info": "e.g. /shop, /pages/about, /collections/blankets", "default": "/" },
+        {
+          "type": "select", "id": "position", "label": "Side of logo", "default": "left",
+          "options": [{ "value": "left", "label": "Left" }, { "value": "right", "label": "Right" }]
+        },
+        {
+          "type": "select", "id": "dropdown", "label": "Hover dropdown", "default": "none",
+          "options": [
+            { "value": "none", "label": "None" },
+            { "value": "types", "label": "Product types (categories)" },
+            { "value": "collections", "label": "All collections" },
+            { "value": "menu", "label": "Links from a menu" }
+          ]
+        },
+        { "type": "link_list", "id": "menu", "label": "Menu for dropdown", "info": "Used when the dropdown is 'Links from a menu'." }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [{"type":"link","settings":{"title":"Shop","link":"/shop","position":"left","dropdown":"none"}},{"type":"link","settings":{"title":"Categories","link":"/collections/all","position":"left","dropdown":"types"}},{"type":"link","settings":{"title":"Collections","link":"/collections","position":"left","dropdown":"collections"}},{"type":"link","settings":{"title":"About","link":"/pages/about","position":"right","dropdown":"none"}},{"type":"link","settings":{"title":"Our World","link":"/blogs/news","position":"right","dropdown":"none"}},{"type":"link","settings":{"title":"Get in Touch","link":"/pages/contact","position":"right","dropdown":"none"}}]
+  }
+}
+{% endschema %}

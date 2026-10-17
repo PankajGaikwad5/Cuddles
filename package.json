@@ -1,0 +1,14 @@
+{
+  "name": "cuddles-theme",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "preview": "node preview/server.js",
+    "dev": "shopify theme dev",
+    "check": "node preview/theme-check.js"
+  },
+  "devDependencies": {
+    "@shopify/theme-check-node": "^3.30.1",
+    "liquidjs": "^10.16.0"
+  }
+}

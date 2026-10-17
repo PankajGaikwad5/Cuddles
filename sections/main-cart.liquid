@@ -1,0 +1,99 @@
+<section class="cart-page" data-cart-page>
+  <header class="page-head">
+    <h1 class="page-head__title">Your bag</h1>
+  </header>
+
+  {%- if cart.item_count == 0 -%}
+    <div class="cart-page__empty">
+      <p>Your bag is empty.</p>
+      <a href="{{ routes.all_products_collection_url }}" class="button-outline">Continue shopping</a>
+    </div>
+  {%- else -%}
+    <form action="{{ routes.cart_url }}" method="post" class="cart-page__form" id="CartPageForm">
+      <div class="cart-page__grid">
+        <div class="cart-page__items">
+          <div class="cart-table__head" aria-hidden="true">
+            <span>Product</span><span>Quantity</span><span>Total</span>
+          </div>
+
+          {%- for item in cart.items -%}
+            <div class="cart-line" data-line="{{ forloop.index }}">
+              <a href="{{ item.url }}" class="cart-line__media">
+                {%- if item.image -%}
+                  {{ item.image | image_url: width: 300 | image_tag: loading: 'lazy', alt: item.product.title }}
+                {%- endif -%}
+              </a>
+
+              <div class="cart-line__info">
+                <a href="{{ item.url }}" class="cart-line__title">{{ item.product.title }}</a>
+                {%- unless item.product_has_only_default_variant -%}
+                  <p class="cart-line__variant">
+                    {%- for option in item.options_with_values -%}
+                      {{ option.name }}: {{ option.value }}{% unless forloop.last %} · {% endunless %}
+                    {%- endfor -%}
+                  </p>
+                {%- endunless -%}
+                {%- for property in item.properties -%}
+                  {%- assign first_char = property.first | slice: 0 -%}
+                  {%- if property.last != blank and first_char != '_' -%}
+                    <p class="cart-line__variant">{{ property.first }}: {{ property.last }}</p>
+                  {%- endif -%}
+                {%- endfor -%}
+                <p class="cart-line__price">
+                  {{ item.final_price | money }}
+                  {%- if item.original_price > item.final_price -%}<s>{{ item.original_price | money }}</s>{%- endif -%}
+                </p>
+              </div>
+
+              <div class="cart-line__qty">
+                {% render 'quantity-input', name: 'updates[]', value: item.quantity, line: forloop.index, id: item.key %}
+                <a href="{{ item.url_to_remove }}" class="cart-line__remove" data-cart-remove="{{ forloop.index }}">Remove</a>
+              </div>
+
+              <p class="cart-line__total">{{ item.final_line_price | money }}</p>
+            </div>
+          {%- endfor -%}
+        </div>
+
+        <aside class="cart-summary">
+          {%- if section.settings.show_note -%}
+            <label class="cart-summary__note">
+              <span>Add a note to your order</span>
+              <textarea name="note" rows="3" data-cart-note>{{ cart.note }}</textarea>
+            </label>
+          {%- endif -%}
+
+          {%- if cart.cart_level_discount_applications.size > 0 -%}
+            <ul class="cart-summary__discounts">
+              {%- for discount in cart.cart_level_discount_applications -%}
+                <li>{{ discount.title }} <span>-{{ discount.total_allocated_amount | money }}</span></li>
+              {%- endfor -%}
+            </ul>
+          {%- endif -%}
+
+          <div class="cart-summary__row">
+            <span>Subtotal</span>
+            <span>{{ cart.total_price | money_with_currency }}</span>
+          </div>
+          <p class="cart-summary__small">Taxes and shipping calculated at checkout.</p>
+
+          <button type="submit" name="checkout" class="button-solid">Checkout</button>
+          {%- if additional_checkout_buttons and section.settings.show_dynamic_checkout -%}
+            <div class="cart-summary__dynamic">{{ content_for_additional_checkout_buttons }}</div>
+          {%- endif -%}
+          <noscript><button type="submit" name="update" class="button-outline">Update bag</button></noscript>
+        </aside>
+      </div>
+    </form>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": [
+    { "type": "checkbox", "id": "show_note", "label": "Enable order notes", "default": true },
+    { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show dynamic checkout buttons", "default": true }
+  ]
+}
+{% endschema %}

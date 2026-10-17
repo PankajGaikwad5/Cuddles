@@ -1,0 +1,34 @@
+{
+  "sections": {
+    "header": {
+      "type": "page-header",
+      "settings": {
+        "eyebrow": "Help",
+        "heading": "Shipping & Returns",
+        "text": "<p>Carefully packed and delivered across India.</p>"
+      }
+    },
+    "shipping": {
+      "type": "collapsible-content",
+      "blocks": {
+        "s1": { "type": "row", "settings": { "heading": "Shipping charges", "content": "<ul><li>Free shipping on orders above ₹2,999</li><li>Flat ₹99 on orders below ₹2,999</li></ul>" } },
+        "s2": { "type": "row", "settings": { "heading": "Delivery times", "content": "<p>Orders are dispatched within 1–2 working days and delivered in 3–7 working days. Remote pin codes may take a little longer.</p>" } },
+        "s3": { "type": "row", "settings": { "heading": "Tracking", "content": "<p>You'll receive a tracking link by email and SMS once your order ships.</p>" } }
+      },
+      "block_order": ["s1", "s2", "s3"],
+      "settings": { "heading": "Shipping", "layout": "split", "open_first": true }
+    },
+    "returns": {
+      "type": "collapsible-content",
+      "blocks": {
+        "r1": { "type": "row", "settings": { "heading": "Returns policy", "content": "<p>Items can be returned within <strong>7 days</strong> of delivery if unused, unwashed and with original tags. Sale items and gift cards are not returnable unless faulty.</p>" } },
+        "r2": { "type": "row", "settings": { "heading": "How to return", "content": "<p>Email us your order number and the items you'd like to return. We'll arrange a reverse pickup from your address.</p>" } },
+        "r3": { "type": "row", "settings": { "heading": "Refunds", "content": "<p>Once your return passes quality check, we refund your original payment method via Razorpay within 5–7 working days.</p>" } },
+        "r4": { "type": "row", "settings": { "heading": "Damaged or wrong item", "content": "<p>Email us within 48 hours of delivery with photos and we'll send a replacement or full refund at no cost to you.</p>" } }
+      },
+      "block_order": ["r1", "r2", "r3", "r4"],
+      "settings": { "heading": "Returns", "layout": "split" }
+    }
+  },
+  "order": ["header", "shipping", "returns"]
+}

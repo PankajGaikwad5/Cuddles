@@ -1,0 +1,132 @@
+<footer class="site-footer">
+  <div class="site-footer__top">
+    {%- if section.settings.show_newsletter -%}
+      <div class="site-footer__newsletter">
+        <h2 class="site-footer__heading">{{ section.settings.newsletter_heading }}</h2>
+        {%- if section.settings.newsletter_text != blank -%}
+          <div class="site-footer__text">{{ section.settings.newsletter_text }}</div>
+        {%- endif -%}
+        {%- form 'customer', id: 'FooterNewsletter', class: 'newsletter-form' -%}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          {%- if form.posted_successfully? -%}
+            <p class="form-message form-message--success">Thank you for subscribing.</p>
+          {%- else -%}
+            <div class="newsletter-form__field">
+              <label for="FooterNewsletterEmail" class="visually-hidden">Email</label>
+              <input id="FooterNewsletterEmail" type="email" name="contact[email]" placeholder="Email address" autocomplete="email" required>
+              <button type="submit" class="newsletter-form__submit" aria-label="Subscribe">
+                {% render 'icon', name: 'arrow-right' %}
+              </button>
+            </div>
+            {%- if form.errors -%}
+              <div class="form-message form-message--error">{{ form.errors | default_errors }}</div>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'menu' -%}
+          <div class="site-footer__col" {{ block.shopify_attributes }}>
+            <h2 class="site-footer__heading">{{ block.settings.heading }}</h2>
+            <ul class="site-footer__list">
+              {%- for link in linklists[block.settings.menu].links -%}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- when 'links' -%}
+          <div class="site-footer__col" {{ block.shopify_attributes }}>
+            <h2 class="site-footer__heading">{{ block.settings.heading }}</h2>
+            <ul class="site-footer__list">
+              {%- assign lines = block.settings.links | newline_to_br | split: '<br />' -%}
+              {%- for line in lines -%}
+                {%- assign parts = line | split: '|' -%}
+                {%- assign label = parts.first | strip -%}
+                {%- assign href = parts.last | strip -%}
+                {%- if label != blank and parts.size > 1 -%}
+                  <li><a href="{{ href }}">{{ label }}</a></li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- when 'text' -%}
+          <div class="site-footer__col" {{ block.shopify_attributes }}>
+            <h2 class="site-footer__heading">{{ block.settings.heading }}</h2>
+            <div class="site-footer__text">{{ block.settings.text }}</div>
+          </div>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="site-footer__bottom">
+    <p class="site-footer__copy">&copy; {{ 'now' | date: '%Y' }} {{ shop.name | link_to: routes.root_url }}</p>
+
+    {%- if section.settings.show_policies and shop.policies.size > 0 -%}
+      <ul class="site-footer__policies">
+        {%- for policy in shop.policies -%}
+          <li><a href="{{ policy.url }}">{{ policy.title }}</a></li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- liquid
+      assign socials = 'instagram,pinterest,youtube,facebook' | split: ','
+    -%}
+    <ul class="site-footer__social" aria-label="Follow us">
+      {%- for name in socials -%}
+        {%- assign key = 'social_' | append: name -%}
+        {%- if settings[key] != blank -%}
+          <li>
+            <a href="{{ settings[key] }}" target="_blank" rel="noopener" aria-label="{{ name | capitalize }}" class="social-link">
+              {% render 'icon', name: name %}
+            </a>
+          </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "checkbox", "id": "show_newsletter", "label": "Show newsletter signup", "default": true },
+    { "type": "text", "id": "newsletter_heading", "label": "Newsletter heading", "default": "Stay close" },
+    { "type": "richtext", "id": "newsletter_text", "label": "Newsletter text", "default": "<p>New pieces, slow stories and early access, a few times a season.</p>" },
+    { "type": "checkbox", "id": "show_policies", "label": "Show policy links", "info": "Add policies in Settings > Policies.", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "links",
+      "name": "Links",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop" },
+        { "type": "textarea", "id": "links", "label": "Links", "info": "One per line: Label | /address", "default": "Shop | /shop\nCollections | /collections\nSearch | /search" }
+      ]
+    },
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Shop" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Visit" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Share your store's story, address or opening hours.</p>" }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [{"type":"links","settings":{"heading":"Shop","links":"Shop | /shop\nCollections | /collections\nSearch | /search"}},{"type":"links","settings":{"heading":"Help","links":"FAQ | /pages/faq\nShipping & Returns | /pages/shipping-returns\nContact | /pages/contact\nMy account | /account"}}]
+  }
+}
+{% endschema %}

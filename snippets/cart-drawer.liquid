@@ -1,0 +1,29 @@
+{%- comment -%}
+  Slide-out cart. Contents are rendered by assets/theme.js from /cart.js so the
+  drawer stays in sync after every Ajax add / change.
+{%- endcomment -%}
+<div class="cart-drawer" data-cart-drawer aria-hidden="true">
+  <div class="cart-drawer__overlay" data-cart-close></div>
+  <aside class="cart-drawer__panel" role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle" tabindex="-1">
+    <header class="cart-drawer__head">
+      <h2 id="CartDrawerTitle" class="cart-drawer__title">Your bag <span data-cart-count-label></span></h2>
+      <button type="button" class="cart-drawer__close" data-cart-close aria-label="Close bag">
+        <span></span><span></span>
+      </button>
+    </header>
+
+    <div class="cart-drawer__body" data-cart-items data-lenis-prevent></div>
+
+    <footer class="cart-drawer__foot" data-cart-footer>
+      <div class="cart-drawer__row">
+        <span>Subtotal</span>
+        <span data-cart-subtotal>{{ cart.total_price | money }}</span>
+      </div>
+      <p class="cart-drawer__note">Taxes and shipping calculated at checkout.</p>
+      <form action="{{ routes.cart_url }}" method="post">
+        <button type="submit" name="checkout" class="button-solid">Checkout</button>
+      </form>
+      <a href="{{ routes.cart_url }}" class="cart-drawer__view">View bag</a>
+    </footer>
+  </aside>
+</div>

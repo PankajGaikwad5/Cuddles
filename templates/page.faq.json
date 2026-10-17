@@ -1,0 +1,53 @@
+{
+  "sections": {
+    "header": {
+      "type": "page-header",
+      "settings": {
+        "eyebrow": "Help",
+        "heading": "Frequently Asked Questions",
+        "text": "<p>Quick answers about orders, delivery and returns. Can't find what you need? <a href=\"/pages/contact\">Get in touch</a>.</p>"
+      }
+    },
+    "orders": {
+      "type": "collapsible-content",
+      "blocks": {
+        "o1": { "type": "row", "settings": { "heading": "Which payment methods do you accept?", "content": "<p>Payments are processed securely through Razorpay. You can pay with UPI, credit and debit cards, net banking and popular wallets.</p>" } },
+        "o2": { "type": "row", "settings": { "heading": "Can I change or cancel my order?", "content": "<p>Contact us within 2 hours of ordering and we'll do our best to help. Once an order has been dispatched it can't be changed, but you can return it under our returns policy.</p>" } },
+        "o3": { "type": "row", "settings": { "heading": "Are prices inclusive of GST?", "content": "<p>Yes, all prices are in Indian Rupees and include applicable GST.</p>" } }
+      },
+      "block_order": ["o1", "o2", "o3"],
+      "settings": { "heading": "Orders & Payment", "layout": "split", "schema_faq": true }
+    },
+    "delivery": {
+      "type": "collapsible-content",
+      "blocks": {
+        "d1": { "type": "row", "settings": { "heading": "Where do you deliver?", "content": "<p>We currently deliver across India only.</p>" } },
+        "d2": { "type": "row", "settings": { "heading": "How long does delivery take?", "content": "<p>Orders are dispatched within 1–2 working days and usually arrive in 3–7 working days, depending on your pin code.</p>" } },
+        "d3": { "type": "row", "settings": { "heading": "How much is shipping?", "content": "<p>Shipping is free on orders above ₹2,999. A flat ₹99 applies to smaller orders.</p>" } },
+        "d4": { "type": "row", "settings": { "heading": "How do I track my order?", "content": "<p>We'll email and SMS a tracking link as soon as your order ships.</p>" } }
+      },
+      "block_order": ["d1", "d2", "d3", "d4"],
+      "settings": { "heading": "Delivery", "layout": "split", "schema_faq": true }
+    },
+    "returns": {
+      "type": "collapsible-content",
+      "blocks": {
+        "r1": { "type": "row", "settings": { "heading": "What is your returns policy?", "content": "<p>Unused items with original tags can be returned within 7 days of delivery. See our <a href=\"/pages/shipping-returns\">Shipping &amp; Returns</a> page for details.</p>" } },
+        "r2": { "type": "row", "settings": { "heading": "When will I get my refund?", "content": "<p>Refunds are made to your original payment method through Razorpay within 5–7 working days of your return being approved.</p>" } },
+        "r3": { "type": "row", "settings": { "heading": "My item arrived damaged. What now?", "content": "<p>We're sorry! Email us within 48 hours of delivery with your order number and photos, and we'll arrange a replacement or full refund.</p>" } }
+      },
+      "block_order": ["r1", "r2", "r3"],
+      "settings": { "heading": "Returns & Refunds", "layout": "split", "schema_faq": true }
+    },
+    "contact": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "Still have a question?",
+        "text": "<p>Our team replies within one working day, Monday to Saturday.</p>",
+        "button_label": "Get in touch",
+        "button_link": "/pages/contact"
+      }
+    }
+  },
+  "order": ["header", "orders", "delivery", "returns", "contact"]
+}

@@ -1,0 +1,131 @@
+<section class="stories" style="--stories-gap: {{ section.settings.gap }}px;">
+  <div class="stories__grid">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign product = block.settings.product
+        assign collection = block.settings.collection
+
+        assign image = block.settings.image
+        if image == blank and product != blank
+          assign image = product.featured_image
+        endif
+        if image == blank and collection != blank
+          assign image = collection.featured_image
+        endif
+
+        assign url = block.settings.link
+        if url == blank and product != blank
+          assign url = product.url
+        endif
+        if url == blank and collection != blank
+          assign url = collection.url
+        endif
+        if url == blank
+          assign url = routes.all_products_collection_url
+        endif
+
+        assign heading = block.settings.heading
+        if heading == blank and collection != blank
+          assign heading = collection.title
+        endif
+        if heading == blank and product != blank
+          assign heading = product.title
+        endif
+      -%}
+
+      <article
+        class="story story--text-{{ block.settings.text_position }}"
+        style="--story-offset: {{ block.settings.offset }}px;"
+        {{ block.shopify_attributes }}
+      >
+        {%- liquid
+          # URL fields accept a full URL or the file name of a theme asset (e.g. leftimg.png).
+          assign image_src = block.settings.image_url
+          if image_src != blank
+            unless image_src contains '/'
+              assign image_src = image_src | asset_url
+            endunless
+          endif
+          assign video_src = block.settings.video_url
+          if video_src != blank
+            unless video_src contains '/'
+              assign video_src = video_src | asset_url
+            endunless
+          endif
+        -%}
+        <a href="{{ url }}" class="story__media" tabindex="-1" aria-hidden="true">
+          {%- if block.settings.video != blank -%}
+            {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, preload: 'metadata', image_size: '1200x' }}
+          {%- elsif video_src != blank -%}
+            <video src="{{ video_src }}" autoplay muted loop playsinline preload="metadata"></video>
+          {%- elsif image != blank -%}
+            {{ image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 33vw, 100vw', alt: heading }}
+          {%- elsif image_src != blank -%}
+            <img src="{{ image_src }}" alt="{{ heading | escape }}" width="1200" height="1800" loading="lazy">
+          {%- endif -%}
+        </a>
+
+        <div class="story__body">
+          {%- if heading != blank -%}
+            <h2 class="story__heading">{{ heading }}</h2>
+          {%- endif -%}
+          {%- if block.settings.text != blank -%}
+            <div class="story__text">{{ block.settings.text }}</div>
+          {%- endif -%}
+          {%- if block.settings.link_label != blank -%}
+            <a href="{{ url }}" class="story__link">{{ block.settings.link_label }}</a>
+          {%- endif -%}
+        </div>
+      </article>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Story columns",
+  "settings": [
+    { "type": "range", "id": "gap", "label": "Column gap", "min": 16, "max": 96, "step": 4, "unit": "px", "default": 48 }
+  ],
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "story",
+      "name": "Story",
+      "settings": [
+        { "type": "header", "content": "Connect to Shopify" },
+        { "type": "collection", "id": "collection", "label": "Collection", "info": "Supplies the image, title and link when those fields are left empty." },
+        { "type": "product", "id": "product", "label": "Product", "info": "Takes priority over the collection for the image and link." },
+        { "type": "header", "content": "Content" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "image_url", "label": "Image URL or theme asset", "info": "Full URL, or a file name from the theme assets folder (e.g. leftimg.png)." },
+        { "type": "video", "id": "video", "label": "Video", "info": "Replaces the image when set." },
+        { "type": "text", "id": "video_url", "label": "Video URL or theme asset", "info": "Full .mp4 URL, or a file name from the theme assets folder (e.g. middlevid.mp4)." },
+        { "type": "text", "id": "heading", "label": "Heading" },
+        { "type": "richtext", "id": "text", "label": "Text" },
+        { "type": "text", "id": "link_label", "label": "Link label", "default": "Shop now" },
+        { "type": "url", "id": "link", "label": "Custom link", "info": "Overrides the product / collection link." },
+        { "type": "header", "content": "Layout" },
+        {
+          "type": "select", "id": "text_position", "label": "Text position", "default": "below",
+          "options": [
+            { "value": "above", "label": "Above image" },
+            { "value": "below", "label": "Below image" }
+          ]
+        },
+        { "type": "range", "id": "offset", "label": "Push column down", "min": 0, "max": 120, "step": 2, "unit": "px", "default": 0 }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Story columns",
+      "blocks": [
+        { "type": "story" },
+        { "type": "story", "settings": { "text_position": "above" } },
+        { "type": "story" }
+      ]
+    }
+  ]
+}
+{% endschema %}

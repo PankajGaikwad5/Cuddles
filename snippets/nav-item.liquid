@@ -1,0 +1,63 @@
+{%- comment -%}
+  One header navigation item, optionally with a hover dropdown.
+  Accepts:
+    title, url
+    mode: 'none' | 'menu' | 'collections' | 'types'
+    menu: a link list (used when mode == 'menu')
+    variant: 'desktop' | 'mobile'
+{%- endcomment -%}
+{%- liquid
+  assign has_children = false
+  case mode
+    when 'menu'
+      if menu.links.size > 0
+        assign has_children = true
+      endif
+    when 'collections'
+      if collections.size > 0
+        assign has_children = true
+      endif
+    when 'types'
+      if shop.types.size > 0
+        assign has_children = true
+      endif
+  endcase
+-%}
+
+{%- capture children -%}
+  {%- case mode -%}
+    {%- when 'menu' -%}
+      {%- for child in menu.links -%}
+        <li><a href="{{ child.url }}" class="{% if variant == 'mobile' %}mobile-menu__link mobile-menu__link--child{% else %}nav-dropdown__link{% endif %}">{{ child.title }}</a></li>
+      {%- endfor -%}
+    {%- when 'collections' -%}
+      {%- for collection in collections limit: 12 -%}
+        {%- if collection.products_count > 0 and collection.handle != 'all' and collection.handle != 'frontpage' -%}
+          <li><a href="{{ collection.url }}" class="{% if variant == 'mobile' %}mobile-menu__link mobile-menu__link--child{% else %}nav-dropdown__link{% endif %}">{{ collection.title }}</a></li>
+        {%- endif -%}
+      {%- endfor -%}
+    {%- when 'types' -%}
+      {%- for type in shop.types limit: 12 -%}
+        {%- if type != blank -%}
+          <li><a href="{{ type | url_for_type }}" class="{% if variant == 'mobile' %}mobile-menu__link mobile-menu__link--child{% else %}nav-dropdown__link{% endif %}">{{ type }}</a></li>
+        {%- endif -%}
+      {%- endfor -%}
+  {%- endcase -%}
+{%- endcapture -%}
+
+{%- if variant == 'mobile' -%}
+  <a href="{{ url }}" class="mobile-menu__link">{{ title }}</a>
+  {%- if has_children -%}<ul class="mobile-menu__children">{{ children }}</ul>{%- endif -%}
+{%- elsif has_children -%}
+  <div class="nav-item nav-item--dropdown">
+    <a href="{{ url }}" class="nav-link" aria-haspopup="true">
+      {{ title }}
+      {% render 'icon', name: 'chevron-down' %}
+    </a>
+    <div class="nav-dropdown">
+      <ul class="nav-dropdown__list">{{ children }}</ul>
+    </div>
+  </div>
+{%- else -%}
+  <a href="{{ url }}" class="nav-link">{{ title }}</a>
+{%- endif -%}

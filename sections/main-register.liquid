@@ -1,0 +1,40 @@
+<section class="account-page account-page--narrow">
+  <header class="page-head">
+    <h1 class="page-head__title">Create account</h1>
+  </header>
+
+  {%- form 'create_customer', class: 'form', novalidate: 'novalidate' -%}
+    {%- if form.errors -%}
+      <div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>
+    {%- endif -%}
+    <div class="form__row">
+      <label class="field">
+        <span class="field__label">First name</span>
+        <input type="text" name="customer[first_name]" autocomplete="given-name" value="{{ form.first_name }}">
+      </label>
+      <label class="field">
+        <span class="field__label">Last name</span>
+        <input type="text" name="customer[last_name]" autocomplete="family-name" value="{{ form.last_name }}">
+      </label>
+    </div>
+    <label class="field">
+      <span class="field__label">Email</span>
+      <input type="email" name="customer[email]" autocomplete="email" autocapitalize="off" value="{{ form.email }}" required>
+    </label>
+    <label class="field">
+      <span class="field__label">Password</span>
+      <input type="password" name="customer[password]" autocomplete="new-password" required>
+    </label>
+    <label class="filter-check">
+      <input type="checkbox" name="customer[accepts_marketing]" value="true">
+      <span class="filter-check__box" aria-hidden="true"></span>
+      <span>Keep me updated with news and offers</span>
+    </label>
+    <button type="submit" class="button-solid form__submit">Create account</button>
+    <a href="{{ routes.account_login_url }}" class="account-page__link account-page__link--center">Already have an account? Log in</a>
+  {%- endform -%}
+</section>
+
+{% schema %}
+{ "name": "Register" }
+{% endschema %}

@@ -1,0 +1,70 @@
+<section class="showcase">
+  <header class="showcase__head">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="showcase__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    {%- if section.settings.link_label != blank -%}
+      <a href="{{ section.settings.link | default: routes.collections_url }}" class="story__link showcase__all">{{ section.settings.link_label }}</a>
+    {%- endif -%}
+  </header>
+
+  <div class="showcase__grid" style="--showcase-cols: {{ section.settings.columns }};">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign collection = block.settings.collection
+        assign title = block.settings.title | default: collection.title
+        assign url = collection.url | default: routes.all_products_collection_url
+        assign image = block.settings.image | default: collection.featured_image
+      -%}
+      <a href="{{ url }}" class="showcase__tile" {{ block.shopify_attributes }}>
+        <div class="showcase__media">
+          {%- if image != blank -%}
+            {{ image | image_url: width: 1000 | image_tag: loading: 'lazy', alt: title, sizes: '(min-width: 990px) 25vw, 70vw' }}
+          {%- elsif block.settings.image_url != blank -%}
+            <img src="{{ block.settings.image_url }}" alt="{{ title | escape }}" width="1000" height="1333" loading="lazy">
+          {%- else -%}
+            {{ 'collection-1' | placeholder_svg_tag: 'placeholder' }}
+          {%- endif -%}
+        </div>
+        <div class="showcase__info">
+          <h3 class="showcase__title">{{ title | default: 'Collection' }}</h3>
+          {%- if collection != blank and section.settings.show_count -%}
+            <span class="showcase__count">{{ collection.products_count }} pieces</span>
+          {%- endif -%}
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shop by collection",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by Collection" },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "View all" },
+    { "type": "url", "id": "link", "label": "Link" },
+    { "type": "range", "id": "columns", "label": "Columns on desktop", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "show_count", "label": "Show product count", "default": true }
+  ],
+  "max_blocks": 8,
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "Defaults to the collection image." },
+        { "type": "text", "id": "image_url", "label": "Image URL fallback" },
+        { "type": "text", "id": "title", "label": "Title", "info": "Defaults to the collection title." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Shop by collection",
+      "blocks": [{ "type": "collection" }, { "type": "collection" }, { "type": "collection" }, { "type": "collection" }]
+    }
+  ]
+}
+{% endschema %}

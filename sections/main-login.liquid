@@ -1,0 +1,59 @@
+<section class="account-page account-page--narrow">
+  <div data-login-panel>
+    <header class="page-head">
+      <h1 class="page-head__title">Log in</h1>
+    </header>
+
+    {%- form 'customer_login', class: 'form', novalidate: 'novalidate' -%}
+      {%- if form.errors -%}
+        <div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+      <label class="field">
+        <span class="field__label">Email</span>
+        <input type="email" name="customer[email]" autocomplete="email" autocapitalize="off" required>
+      </label>
+      {%- if form.password_needed -%}
+        <label class="field">
+          <span class="field__label">Password</span>
+          <input type="password" name="customer[password]" autocomplete="current-password" required>
+        </label>
+        <a href="#recover" class="account-page__link" data-recover-toggle>Forgot your password?</a>
+      {%- endif -%}
+      <button type="submit" class="button-solid form__submit">Sign in</button>
+      <a href="{{ routes.account_register_url }}" class="account-page__link account-page__link--center">Create an account</a>
+    {%- endform -%}
+  </div>
+
+  <div data-recover-panel hidden>
+    <header class="page-head">
+      <h1 class="page-head__title">Reset password</h1>
+      <p class="page-head__sub">We'll send you an email to reset your password.</p>
+    </header>
+    {%- form 'recover_customer_password', class: 'form' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="form-message form-message--success" data-recover-success>Check your inbox for a reset link.</p>
+      {%- endif -%}
+      {%- if form.errors -%}
+        <div class="form-message form-message--error">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+      <label class="field">
+        <span class="field__label">Email</span>
+        <input type="email" name="email" autocomplete="email" required>
+      </label>
+      <button type="submit" class="button-solid form__submit">Send reset link</button>
+      <a href="#login" class="account-page__link account-page__link--center" data-recover-toggle>Cancel</a>
+    {%- endform -%}
+  </div>
+
+  {%- if shop.checkout.guest_login -%}
+    <div class="account-page__guest">
+      {%- form 'guest_login' -%}
+        <button type="submit" class="button-outline">Continue as guest</button>
+      {%- endform -%}
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{ "name": "Login" }
+{% endschema %}

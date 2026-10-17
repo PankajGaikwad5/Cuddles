@@ -1,0 +1,107 @@
+{
+  "current": {
+    "color_background": "#FFFAE9",
+    "color_text": "#805B4B",
+    "color_accent": "#805B4B",
+    "cart_type": "drawer",
+    "social_instagram": "https://instagram.com",
+    "social_pinterest": "https://pinterest.com",
+    "sections": {
+      "header": {
+        "type": "header",
+        "blocks": {
+          "link-1": {
+            "type": "link",
+            "settings": {
+              "title": "Shop",
+              "link": "/shop",
+              "position": "left",
+              "dropdown": "none"
+            }
+          },
+          "link-2": {
+            "type": "link",
+            "settings": {
+              "title": "Categories",
+              "link": "/collections/all",
+              "position": "left",
+              "dropdown": "types"
+            }
+          },
+          "link-3": {
+            "type": "link",
+            "settings": {
+              "title": "Collections",
+              "link": "/collections",
+              "position": "left",
+              "dropdown": "collections"
+            }
+          },
+          "link-4": {
+            "type": "link",
+            "settings": {
+              "title": "About",
+              "link": "/pages/about",
+              "position": "right",
+              "dropdown": "none"
+            }
+          },
+          "link-5": {
+            "type": "link",
+            "settings": {
+              "title": "Our World",
+              "link": "/blogs/news",
+              "position": "right",
+              "dropdown": "none"
+            }
+          },
+          "link-6": {
+            "type": "link",
+            "settings": {
+              "title": "Get in Touch",
+              "link": "/pages/contact",
+              "position": "right",
+              "dropdown": "none"
+            }
+          }
+        },
+        "block_order": [
+          "link-1",
+          "link-2",
+          "link-3",
+          "link-4",
+          "link-5",
+          "link-6"
+        ],
+        "settings": {}
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "links-shop": {
+            "type": "links",
+            "settings": {
+              "heading": "Shop",
+              "links": "Shop | /shop\nCollections | /collections\nSearch | /search"
+            }
+          },
+          "links-help": {
+            "type": "links",
+            "settings": {
+              "heading": "Help",
+              "links": "FAQ | /pages/faq\nShipping & Returns | /pages/shipping-returns\nContact | /pages/contact\nMy account | /account"
+            }
+          }
+        },
+        "block_order": [
+          "links-shop",
+          "links-help"
+        ],
+        "settings": {}
+      }
+    },
+    "social_youtube": "https://youtube.com",
+    "social_facebook": "https://facebook.com",
+    "shop_path": "/shop"
+  }
+}

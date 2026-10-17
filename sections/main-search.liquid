@@ -1,0 +1,52 @@
+<section class="search-page">
+  <header class="page-head">
+    <h1 class="page-head__title">Search</h1>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+      <input type="hidden" name="options[prefix]" value="last">
+      <label for="SearchInput" class="visually-hidden">Search</label>
+      <input id="SearchInput" type="search" name="q" value="{{ search.terms | escape }}" placeholder="What are you looking for?" autocomplete="off">
+      <button type="submit" aria-label="Search">{% render 'icon', name: 'search' %}</button>
+    </form>
+    {%- if search.performed -%}
+      <p class="page-head__sub">
+        {{ search.results_count }} {% if search.results_count == 1 %}result{% else %}results{% endif %} for “{{ search.terms | escape }}”
+      </p>
+    {%- endif -%}
+  </header>
+
+  {%- if search.performed -%}
+    {%- paginate search.results by section.settings.per_page -%}
+      {%- if search.results_count == 0 -%}
+        <div class="collection__empty">
+          <p>Nothing found. Try another word, or browse everything.</p>
+          <a href="{{ routes.all_products_collection_url }}" class="button-outline">Shop all</a>
+        </div>
+      {%- else -%}
+        <div class="product-grid" style="--grid-cols: 4;">
+          {%- for item in search.results -%}
+            {%- case item.object_type -%}
+              {%- when 'product' -%}
+                {% render 'product-card', product: item, loading: 'lazy' %}
+              {%- else -%}
+                <a href="{{ item.url }}" class="result-card">
+                  <span class="result-card__type">{% if item.object_type == 'article' %}Journal{% else %}Page{% endif %}</span>
+                  <h3 class="result-card__title">{{ item.title }}</h3>
+                  <p class="result-card__excerpt">{{ item.content | strip_html | truncatewords: 24 }}</p>
+                </a>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+      {% render 'pagination', paginate: paginate %}
+    {%- endpaginate -%}
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Search results",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Results per page", "min": 8, "max": 48, "step": 4, "default": 24 }
+  ]
+}
+{% endschema %}

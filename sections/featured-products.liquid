@@ -1,0 +1,67 @@
+{%- liquid
+  assign source = section.settings.products
+  if source == blank or source.size == 0
+    assign source = section.settings.collection.products
+  endif
+-%}
+
+<section class="picks" data-slider>
+  <header class="picks__head">
+    <div>
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="simple-page__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h2 class="showcase__heading">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}
+        <div class="picks__text">{{ section.settings.text }}</div>
+      {%- endif -%}
+    </div>
+    <div class="picks__nav">
+      <button type="button" class="picks__arrow" data-slider-step="-1" aria-label="Previous">{% render 'icon', name: 'arrow-left' %}</button>
+      <button type="button" class="picks__arrow" data-slider-step="1" aria-label="Next">{% render 'icon', name: 'arrow-right' %}</button>
+    </div>
+  </header>
+
+  <div class="picks__track" data-slider-track>
+    {%- if source != blank and source.size > 0 -%}
+      {%- for product in source limit: section.settings.limit -%}
+        <div class="picks__item">{% render 'product-card', product: product, loading: 'lazy' %}</div>
+      {%- endfor -%}
+    {%- else -%}
+      {%- for i in (1..4) -%}
+        <div class="picks__item">
+          <div class="product-card">
+            <div class="product-card__media">{{ 'product-' | append: i | placeholder_svg_tag: 'placeholder' }}</div>
+            <div class="product-card__info">
+              <h3 class="product-card__title">Product title</h3>
+              <p class="product-card__price">{{ 0 | money }}</p>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.link_label != blank -%}
+    <div class="picks__foot">
+      <a href="{{ section.settings.link | default: section.settings.collection.url | default: routes.all_products_collection_url }}" class="button-outline">{{ section.settings.link_label }}</a>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Featured products",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Hand-picked" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Mia's Picks" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>The pieces Mia keeps reaching for this season.</p>" },
+    { "type": "product_list", "id": "products", "label": "Products", "limit": 12 },
+    { "type": "collection", "id": "collection", "label": "Or use a collection", "info": "Used when no products are picked above." },
+    { "type": "range", "id": "limit", "label": "Maximum products", "min": 2, "max": 12, "step": 1, "default": 8 },
+    { "type": "text", "id": "link_label", "label": "Button label", "default": "Shop Mia's Picks" },
+    { "type": "url", "id": "link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Featured products" }]
+}
+{% endschema %}

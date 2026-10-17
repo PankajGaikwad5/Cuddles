@@ -1,0 +1,49 @@
+<section class="account-page">
+  <header class="page-head">
+    <h1 class="page-head__title">My account</h1>
+    <p class="page-head__sub">Welcome back, {{ customer.first_name | default: customer.name }}.</p>
+    <a href="{{ routes.account_logout_url }}" class="account-page__link">Log out</a>
+  </header>
+
+  <div class="account-grid">
+    <div>
+      <h2 class="account-page__heading">Order history</h2>
+      {%- paginate customer.orders by 20 -%}
+        {%- if customer.orders.size > 0 -%}
+          <table class="data-table">
+            <thead>
+              <tr><th>Order</th><th>Date</th><th>Payment</th><th>Fulfilment</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              {%- for order in customer.orders -%}
+                <tr>
+                  <td data-label="Order"><a href="{{ order.customer_url }}">{{ order.name }}</a></td>
+                  <td data-label="Date">{{ order.created_at | date: '%d %b %Y' }}</td>
+                  <td data-label="Payment">{{ order.financial_status_label }}</td>
+                  <td data-label="Fulfilment">{{ order.fulfillment_status_label }}</td>
+                  <td data-label="Total">{{ order.total_price | money_with_currency }}</td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        {%- else -%}
+          <p>You haven't placed any orders yet.</p>
+        {%- endif -%}
+        {% render 'pagination', paginate: paginate %}
+      {%- endpaginate -%}
+    </div>
+
+    <aside>
+      <h2 class="account-page__heading">Account details</h2>
+      <p>{{ customer.name }}<br>{{ customer.email }}</p>
+      {%- if customer.default_address -%}
+        <address class="account-page__address">{{ customer.default_address | format_address }}</address>
+      {%- endif -%}
+      <a href="{{ routes.account_addresses_url }}" class="story__link">View addresses ({{ customer.addresses_count }})</a>
+    </aside>
+  </div>
+</section>
+
+{% schema %}
+{ "name": "Account" }
+{% endschema %}

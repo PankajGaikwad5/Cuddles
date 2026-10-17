@@ -1,0 +1,31 @@
+{%- comment -%}
+  Renders a product card.
+  Accepts: product, loading ('lazy' | 'eager')
+{%- endcomment -%}
+<a href="{{ product.url }}" class="product-card">
+  <div class="product-card__media">
+    {%- if product.featured_image != blank -%}
+      {{ product.featured_image | image_url: width: 900 | image_tag: loading: loading, class: 'product-card__img', alt: product.title, sizes: '(min-width: 990px) 25vw, 50vw' }}
+      {%- if product.images.size > 1 -%}
+        {{ product.images[1] | image_url: width: 900 | image_tag: loading: 'lazy', class: 'product-card__img product-card__img--alt', alt: '', sizes: '(min-width: 990px) 25vw, 50vw' }}
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if product.available == false -%}
+      <span class="product-card__badge">Sold out</span>
+    {%- elsif product.compare_at_price > product.price -%}
+      <span class="product-card__badge">Sale</span>
+    {%- endif -%}
+  </div>
+
+  <div class="product-card__info">
+    <h3 class="product-card__title">{{ product.title }}</h3>
+    <p class="product-card__price">
+      {%- if product.price_varies -%}From {% endif -%}
+      {{ product.price | money }}
+      {%- if product.compare_at_price > product.price -%}
+        <s>{{ product.compare_at_price | money }}</s>
+      {%- endif -%}
+    </p>
+  </div>
+</a>

@@ -1,0 +1,63 @@
+<article class="article">
+  <header class="article__head">
+    <p class="collection__crumb"><a href="{{ blog.url }}">{{ blog.title }}</a></p>
+    <h1 class="collection__title">{{ article.title }}</h1>
+    <p class="article__meta">
+      {{ article.published_at | date: '%d %B %Y' }}
+      {%- if section.settings.show_author %} · {{ article.author }}{% endif -%}
+    </p>
+  </header>
+
+  {%- if article.image -%}
+    <div class="article__image">
+      {{ article.image | image_url: width: 2000 | image_tag: loading: 'eager', alt: article.title, sizes: '100vw' }}
+    </div>
+  {%- endif -%}
+
+  <div class="rte article__content">{{ article.content }}</div>
+
+  {%- if blog.comments_enabled? -%}
+    <div class="article__comments">
+      {%- if article.comments_count > 0 -%}
+        <h2 class="related__heading">{{ article.comments_count }} {% if article.comments_count == 1 %}comment{% else %}comments{% endif %}</h2>
+        {%- paginate article.comments by 10 -%}
+          <ul class="comment-list">
+            {%- for comment in article.comments -%}
+              <li class="comment">
+                <div class="rte">{{ comment.content }}</div>
+                <p class="article__meta">{{ comment.author }} · {{ comment.created_at | date: '%d %B %Y' }}</p>
+              </li>
+            {%- endfor -%}
+          </ul>
+          {% render 'pagination', paginate: paginate %}
+        {%- endpaginate -%}
+      {%- endif -%}
+
+      {%- form 'new_comment', article, class: 'form' -%}
+        <h2 class="related__heading">Leave a comment</h2>
+        {%- if form.posted_successfully? -%}
+          <p class="form-message form-message--success">
+            {%- if blog.moderated? -%}Thanks — your comment will appear once approved.{%- else -%}Thanks for your comment.{%- endif -%}
+          </p>
+        {%- elsif form.errors -%}
+          <div class="form-message form-message--error">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+        <div class="form__row">
+          <label class="field"><span class="field__label">Name</span><input type="text" name="comment[author]" value="{{ form.author }}" required></label>
+          <label class="field"><span class="field__label">Email</span><input type="email" name="comment[email]" value="{{ form.email }}" required></label>
+        </div>
+        <label class="field"><span class="field__label">Comment</span><textarea name="comment[body]" rows="5" required>{{ form.body }}</textarea></label>
+        <button type="submit" class="button-solid form__submit">Post comment</button>
+      {%- endform -%}
+    </div>
+  {%- endif -%}
+</article>
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": [
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true }
+  ]
+}
+{% endschema %}

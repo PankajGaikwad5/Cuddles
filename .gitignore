@@ -1,0 +1,24 @@
+# Dependencies (local preview + Theme Check only)
+node_modules/
+
+# Built theme zips
+dist/
+*.zip
+
+# Shopify CLI
+.shopify/
+
+# Environment / secrets
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

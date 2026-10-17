@@ -1,0 +1,45 @@
+<section class="collection">
+  <header class="collection__hero">
+    <h1 class="collection__title">{{ blog.title }}</h1>
+    {%- if blog.all_tags.size > 0 -%}
+      <ul class="blog-tags">
+        <li><a href="{{ blog.url }}" {% unless current_tags %}class="is-active"{% endunless %}>All</a></li>
+        {%- for tag in blog.all_tags -%}
+          <li>
+            <a href="{{ blog.url }}/tagged/{{ tag | handleize }}" {% if current_tags contains tag %}class="is-active"{% endif %}>{{ tag }}</a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </header>
+
+  {%- paginate blog.articles by section.settings.per_page -%}
+    <div class="article-grid">
+      {%- for article in blog.articles -%}
+        <a href="{{ article.url }}" class="article-card">
+          <div class="article-card__media">
+            {%- if article.image -%}
+              {{ article.image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: article.title, sizes: '(min-width: 990px) 33vw, 100vw' }}
+            {%- endif -%}
+          </div>
+          <p class="article-card__date">{{ article.published_at | date: '%d %B %Y' }}</p>
+          <h2 class="article-card__title">{{ article.title }}</h2>
+          <p class="article-card__excerpt">
+            {%- if article.excerpt != blank -%}{{ article.excerpt | strip_html | truncatewords: 26 }}{%- else -%}{{ article.content | strip_html | truncatewords: 26 }}{%- endif -%}
+          </p>
+          <span class="story__link">Read more</span>
+        </a>
+      {%- endfor -%}
+    </div>
+    {% render 'pagination', paginate: paginate %}
+  {%- endpaginate -%}
+</section>
+
+{% schema %}
+{
+  "name": "Blog",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Articles per page", "min": 3, "max": 24, "step": 3, "default": 9 }
+  ]
+}
+{% endschema %}

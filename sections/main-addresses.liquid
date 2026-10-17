@@ -1,0 +1,51 @@
+<section class="account-page">
+  <header class="page-head">
+    <a href="{{ routes.account_url }}" class="account-page__link">← Back to account</a>
+    <h1 class="page-head__title">Addresses</h1>
+  </header>
+
+  <div class="address-new">
+    <button type="button" class="button-outline" data-toggle-target="AddressNew">Add a new address</button>
+    <div id="AddressNew" class="address-form" hidden>
+      {%- form 'customer_address', customer.new_address, class: 'form' -%}
+        {% render 'address-form', form: form %}
+        <div class="form__actions">
+          <button type="submit" class="button-solid">Add address</button>
+          <button type="button" class="button-outline" data-toggle-target="AddressNew">Cancel</button>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+
+  {%- paginate customer.addresses by 10 -%}
+    <ul class="address-list">
+      {%- for address in customer.addresses -%}
+        <li class="address-card">
+          {%- if address == customer.default_address -%}<p class="simple-page__eyebrow">Default</p>{%- endif -%}
+          <address class="account-page__address">{{ address | format_address }}</address>
+          <div class="address-card__actions">
+            <button type="button" class="story__link" data-toggle-target="AddressEdit-{{ address.id }}">Edit</button>
+            <form method="post" action="{{ address.url }}" data-confirm="Delete this address?">
+              <input type="hidden" name="_method" value="delete">
+              <button type="submit" class="story__link">Delete</button>
+            </form>
+          </div>
+          <div id="AddressEdit-{{ address.id }}" class="address-form" hidden>
+            {%- form 'customer_address', address, class: 'form' -%}
+              {% render 'address-form', form: form %}
+              <div class="form__actions">
+                <button type="submit" class="button-solid">Update address</button>
+                <button type="button" class="button-outline" data-toggle-target="AddressEdit-{{ address.id }}">Cancel</button>
+              </div>
+            {%- endform -%}
+          </div>
+        </li>
+      {%- endfor -%}
+    </ul>
+    {% render 'pagination', paginate: paginate %}
+  {%- endpaginate -%}
+</section>
+
+{% schema %}
+{ "name": "Addresses" }
+{% endschema %}

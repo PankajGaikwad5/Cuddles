@@ -1,0 +1,113 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {}
+    },
+    "stories": {
+      "type": "story-columns",
+      "blocks": {
+        "story-1": {
+          "type": "story",
+          "settings": {
+            "image_url": "leftimg.png",
+            "heading": "Made Slowly",
+            "text": "<p>Hand-finished pieces in soft, natural fabrics. Made to be lived in and loved for years.</p>",
+            "link_label": "Shop now",
+            "text_position": "below",
+            "offset": 0
+          }
+        },
+        "story-2": {
+          "type": "story",
+          "settings": {
+            "heading": "A Softer Season",
+            "text": "<p>Relaxed layers, gentle textures and warm neutrals that bring comfort to autumn dressing.</p>",
+            "link_label": "Shop now",
+            "text_position": "above",
+            "offset": 0,
+            "video_url": "middlevid.mp4"
+          }
+        },
+        "story-3": {
+          "type": "story",
+          "settings": {
+            "image_url": "rightimg.png",
+            "heading": "Weekend Ease",
+            "text": "<p>Easy favourites you'll reach for all week. Discover our loungewear for slow mornings and long evenings.</p>",
+            "link_label": "Shop now",
+            "text_position": "below",
+            "offset": 0
+          }
+        }
+      },
+      "block_order": [
+        "story-1",
+        "story-2",
+        "story-3"
+      ],
+      "settings": {}
+    },
+    "collections": {
+      "type": "collection-showcase",
+      "settings": {},
+      "blocks": {
+        "col-1": {
+          "type": "collection",
+          "settings": {
+            "collection": "new",
+            "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=1000&q=80"
+          }
+        },
+        "col-2": {
+          "type": "collection",
+          "settings": {
+            "collection": "loungewear",
+            "image_url": "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=1000&q=80"
+          }
+        },
+        "col-3": {
+          "type": "collection",
+          "settings": {
+            "collection": "blankets",
+            "image_url": "https://images.unsplash.com/photo-1584370848010-d7fe6bc767ec?w=1000&q=80"
+          }
+        },
+        "col-4": {
+          "type": "collection",
+          "settings": {
+            "collection": "accessories",
+            "image_url": "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=1000&q=80"
+          }
+        }
+      },
+      "block_order": [
+        "col-1",
+        "col-2",
+        "col-3",
+        "col-4"
+      ]
+    },
+    "picks": {
+      "type": "featured-products",
+      "settings": {
+        "products": [
+          "alpaca-crew-neck",
+          "honey-wool-wrap",
+          "cloud-lounge-set",
+          "heirloom-throw",
+          "bark-merino-roll-neck",
+          "waffle-robe",
+          "cashmere-beanie",
+          "linen-sleep-shirt"
+        ]
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "stories",
+    "collections",
+    "picks"
+  ]
+}

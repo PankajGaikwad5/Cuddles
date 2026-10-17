@@ -1,0 +1,22 @@
+{%- comment -%}
+  Glacial Indifference is the only typeface on the site. URLs come from asset_url so
+  they always resolve on Shopify's CDN; font-display: block avoids flashing a fallback font.
+{%- endcomment -%}
+{{ 'GlacialIndifference-Regular.woff' | asset_url | preload_tag: as: 'font', type: 'font/woff', crossorigin: 'anonymous' }}
+{{ 'GlacialIndifference-Bold.woff' | asset_url | preload_tag: as: 'font', type: 'font/woff', crossorigin: 'anonymous' }}
+<style>
+  @font-face {
+    font-family: 'Glacial Indifference';
+    src: url('{{ 'GlacialIndifference-Regular.woff' | asset_url }}') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: block;
+  }
+  @font-face {
+    font-family: 'Glacial Indifference';
+    src: url('{{ 'GlacialIndifference-Bold.woff' | asset_url }}') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: block;
+  }
+</style>

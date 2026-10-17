@@ -1,0 +1,24 @@
+<header class="page-head page-head--banner">
+  {%- if section.settings.eyebrow != blank -%}
+    <p class="simple-page__eyebrow">{{ section.settings.eyebrow }}</p>
+  {%- endif -%}
+  <h1 class="page-head__title">{{ section.settings.heading | default: page.title }}</h1>
+  {%- if section.settings.text != blank -%}
+    <div class="page-head__sub rte">{{ section.settings.text }}</div>
+  {%- elsif page.content != blank and section.settings.show_page_content -%}
+    <div class="page-head__sub rte">{{ page.content }}</div>
+  {%- endif -%}
+</header>
+
+{% schema %}
+{
+  "name": "Page header",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "info": "Defaults to the page title." },
+    { "type": "richtext", "id": "text", "label": "Intro text" },
+    { "type": "checkbox", "id": "show_page_content", "label": "Show page content when intro is empty", "default": true }
+  ],
+  "presets": [{ "name": "Page header" }]
+}
+{% endschema %}

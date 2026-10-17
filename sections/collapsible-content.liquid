@@ -1,0 +1,75 @@
+<section class="faq">
+  <div class="faq__inner faq__inner--{{ section.settings.layout }}">
+    <header class="faq__head">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="simple-page__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="faq__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+      {%- if section.settings.text != blank -%}
+        <div class="faq__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+    </header>
+
+    <div class="faq__list">
+      {%- for block in section.blocks -%}
+        <details class="accordion" {% if section.settings.open_first and forloop.first %}open{% endif %} {{ block.shopify_attributes }}>
+          <summary>{{ block.settings.heading }}</summary>
+          <div class="accordion__body rte">{{ block.settings.content }}</div>
+        </details>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{%- if section.settings.schema_faq and section.blocks.size > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- for block in section.blocks -%}
+          {
+            "@type": "Question",
+            "name": {{ block.settings.heading | json }},
+            "acceptedAnswer": { "@type": "Answer", "text": {{ block.settings.content | strip_html | json }} }
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Collapsible content",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Frequently asked questions" },
+    { "type": "richtext", "id": "text", "label": "Text" },
+    {
+      "type": "select", "id": "layout", "label": "Layout", "default": "stacked",
+      "options": [
+        { "value": "stacked", "label": "Heading above" },
+        { "value": "split", "label": "Heading beside" }
+      ]
+    },
+    { "type": "checkbox", "id": "open_first", "label": "Open first row", "default": false },
+    { "type": "checkbox", "id": "schema_faq", "label": "Mark up as FAQ for Google", "info": "Turn on for question-and-answer content.", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "Row",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Question" },
+        { "type": "richtext", "id": "content", "label": "Content", "default": "<p>Answer.</p>" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Collapsible content", "blocks": [{ "type": "row" }, { "type": "row" }, { "type": "row" }] }
+  ]
+}
+{% endschema %}

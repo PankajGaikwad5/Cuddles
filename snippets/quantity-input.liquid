@@ -1,0 +1,19 @@
+{%- comment -%}
+  Accepts: name, value, min (default 1), line (cart line index, optional), id (input id suffix)
+{%- endcomment -%}
+{%- assign min = min | default: 1 -%}
+<div class="qty" data-qty>
+  <button type="button" class="qty__btn" data-qty-step="-1" aria-label="Decrease quantity">&minus;</button>
+  <input
+    class="qty__input"
+    type="number"
+    name="{{ name }}"
+    value="{{ value | default: 1 }}"
+    min="{% if line %}0{% else %}{{ min }}{% endif %}"
+    {% if line %}data-line="{{ line }}"{% endif %}
+    {% if id %}id="Qty-{{ id }}"{% endif %}
+    aria-label="Quantity"
+    inputmode="numeric"
+  >
+  <button type="button" class="qty__btn" data-qty-step="1" aria-label="Increase quantity">+</button>
+</div>
