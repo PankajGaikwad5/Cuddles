@@ -47,7 +47,8 @@
                 {%- assign label = parts.first | strip -%}
                 {%- assign href = parts.last | strip -%}
                 {%- if label != blank and parts.size > 1 -%}
-                  <li><a href="{{ href }}">{{ label }}</a></li>
+                  {%- capture resolved -%}{% render 'link-href', url: href %}{%- endcapture -%}
+                  <li><a href="{{ resolved }}">{{ label }}</a></li>
                 {%- endif -%}
               {%- endfor -%}
             </ul>

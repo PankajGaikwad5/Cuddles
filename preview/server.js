@@ -164,6 +164,7 @@ function globals() {
       policies: policies(),
       types: ['Tops', 'Bottoms', 'Sets', 'Throws & Blankets', 'Wraps & Scarves'],
     },
+    pages: Object.fromEntries(STORE_PAGES.map((h) => [h, mock.getPage(h)])),
     settings,
     request: { locale: { iso_code: 'en' }, design_mode: false, origin: ORIGIN, page_type: 'index' },
     canonical_url: ORIGIN,
@@ -479,11 +480,20 @@ async function handlePost(req, res, url) {
 }
 
 /* ======================= Page routing ======================= */
+// Pages that exist in the store. A fresh store has Contact; FAQ and Shipping & Returns are the
+// ones the setup notes ask you to create. There is deliberately no About page, to exercise the
+// theme's built-in fallback.
+const STORE_PAGES = ['contact', 'faq', 'shipping-returns'];
 function routePage(url, query) {
   const ctx = (name, extra = {}) => ({ name, ctx: { template: { name: name.split('/').pop() }, request: { locale: { iso_code: 'en' }, origin: ORIGIN, page_type: name.split('/').pop() }, canonical_url: ORIGIN + url, ...extra } });
   let m;
 
-  if (url === '/') return ctx('index');
+  // Alternate templates via ?view= (e.g. /?view=about -> templates/index.about.json), like Shopify.
+  if (url === '/') {
+    const view = query.get('view');
+    if (view && fs.existsSync(path.join(ROOT, 'templates', `index.${view}.json`))) return ctx(`index.${view}`, { page_title: view });
+    return ctx('index');
+  }
   if (url === '/cart') return ctx('cart', { page_title: 'Your bag' });
   if (url === '/collections' || url === '/collections/') return ctx('list-collections', { page_title: 'Collections' });
   if ((m = url.match(/^\/collections\/([^/]+)\/?$/))) {
@@ -504,10 +514,14 @@ function routePage(url, query) {
       : [];
     return ctx('search', { page_title: 'Search', search: { performed: !!q, terms: query.get('q') || '', results, results_count: results.length } });
   }
-  if ((m = url.match(/^\/pages\/([^/]+)/))) {
+  if ((m = url.match(/^\/pages\/([^/]+)/)) && STORE_PAGES.includes(m[1])) {
     const page = mock.getPage(m[1]);
     const special = { contact: 'page.contact', faq: 'page.faq', 'shipping-returns': 'page.shipping-returns' }[m[1]];
     return ctx(special || 'page', { page, page_title: page.title });
+  }
+  // A fresh store's default blog exists but has no posts.
+  if (url === '/blogs/news' || url === '/blogs/news/') {
+    return ctx('blog', { blog: { title: 'News', handle: 'news', url: '/blogs/news', articles: [], articles_count: 0, all_tags: [] }, page_title: 'News' });
   }
   if (/^\/blogs\/[^/]+\/?$/.test(url) || url.includes('/tagged/')) {
     const tag = url.split('/tagged/')[1];

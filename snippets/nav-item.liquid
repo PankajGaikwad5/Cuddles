@@ -6,6 +6,7 @@
     menu: a link list (used when mode == 'menu')
     variant: 'desktop' | 'mobile'
 {%- endcomment -%}
+{%- capture href -%}{% render 'link-href', url: url %}{%- endcapture -%}
 {%- liquid
   assign has_children = false
   case mode
@@ -46,11 +47,11 @@
 {%- endcapture -%}
 
 {%- if variant == 'mobile' -%}
-  <a href="{{ url }}" class="mobile-menu__link">{{ title }}</a>
+  <a href="{{ href }}" class="mobile-menu__link">{{ title }}</a>
   {%- if has_children -%}<ul class="mobile-menu__children">{{ children }}</ul>{%- endif -%}
 {%- elsif has_children -%}
   <div class="nav-item nav-item--dropdown">
-    <a href="{{ url }}" class="nav-link" aria-haspopup="true">
+    <a href="{{ href }}" class="nav-link" aria-haspopup="true">
       {{ title }}
       {% render 'icon', name: 'chevron-down' %}
     </a>
@@ -59,5 +60,5 @@
     </div>
   </div>
 {%- else -%}
-  <a href="{{ url }}" class="nav-link">{{ title }}</a>
+  <a href="{{ href }}" class="nav-link">{{ title }}</a>
 {%- endif -%}

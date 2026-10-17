@@ -1,0 +1,41 @@
+{
+  "sections": {
+    "header": {
+      "type": "page-header",
+      "settings": {
+        "eyebrow": "Our Story",
+        "heading": "About Cuddles",
+        "text": "<p>Soft, thoughtful clothing for little ones, made with love by Mia &amp; Co.</p>",
+        "show_page_content": false
+      }
+    },
+    "story": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "Made for the little moments",
+        "text": "<p>Cuddles began with a simple wish: clothes that feel as gentle as a hug. Every piece is designed for comfort first, in breathable, skin-friendly fabrics that move with growing children through naps, play and everything in between.</p><p>We make in small batches with local makers across India, paying close attention to every seam, smocked panel and tiny bow. Nothing is rushed, and nothing is made in excess.</p>",
+        "align": "center"
+      }
+    },
+    "promise": {
+      "type": "collapsible-content",
+      "blocks": {
+        "p1": { "type": "row", "settings": { "heading": "Gentle fabrics", "content": "<p>Soft, breathable cotton and muslin chosen to be kind to delicate skin.</p>" } },
+        "p2": { "type": "row", "settings": { "heading": "Made in small batches", "content": "<p>Crafted with local makers in India, so every piece gets the care it deserves.</p>" } },
+        "p3": { "type": "row", "settings": { "heading": "Designed to be loved", "content": "<p>Timeless styles made to be worn, washed and handed down.</p>" } }
+      },
+      "block_order": ["p1", "p2", "p3"],
+      "settings": { "heading": "Our promise", "layout": "split", "open_first": true }
+    },
+    "cta": {
+      "type": "rich-text",
+      "settings": {
+        "heading": "Discover the collection",
+        "text": "<p>Find something soft for your little one.</p>",
+        "button_label": "Shop now",
+        "button_link": "/collections/all"
+      }
+    }
+  },
+  "order": ["header", "story", "promise", "cta"]
+}

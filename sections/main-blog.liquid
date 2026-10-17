@@ -13,6 +13,15 @@
     {%- endif -%}
   </header>
 
+  {%- if blog.articles_count == 0 -%}
+    <div class="blog-empty">
+      <p class="simple-page__eyebrow">{{ section.settings.empty_eyebrow }}</p>
+      <h2 class="faq__heading">{{ section.settings.empty_heading }}</h2>
+      <div class="rich-text__body rte">{{ section.settings.empty_text }}</div>
+      <a href="{{ routes.all_products_collection_url }}" class="button-outline rich-text__button">Shop the collection</a>
+    </div>
+  {%- endif -%}
+
   {%- paginate blog.articles by section.settings.per_page -%}
     <div class="article-grid">
       {%- for article in blog.articles -%}
@@ -39,7 +48,11 @@
 {
   "name": "Blog",
   "settings": [
-    { "type": "range", "id": "per_page", "label": "Articles per page", "min": 3, "max": 24, "step": 3, "default": 9 }
+    { "type": "range", "id": "per_page", "label": "Articles per page", "min": 3, "max": 24, "step": 3, "default": 9 },
+    { "type": "header", "content": "When there are no posts yet" },
+    { "type": "text", "id": "empty_eyebrow", "label": "Eyebrow", "default": "Coming soon" },
+    { "type": "text", "id": "empty_heading", "label": "Heading", "default": "Stories from our world" },
+    { "type": "richtext", "id": "empty_text", "label": "Text", "default": "<p>Behind-the-scenes moments, styling notes and little stories from Mia &amp; Co. are on their way.</p>" }
   ]
 }
 {% endschema %}

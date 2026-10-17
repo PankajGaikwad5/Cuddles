@@ -430,3 +430,5 @@ a.button-solid { display: inline-flex; align-items: center; justify-content: cen
 }
 .social-link .icon { width: 16px; height: 16px; }
 .social-link:hover { background: var(--color-text); border-color: var(--color-text); color: var(--color-bg); }
+
+.blog-empty { max-width: 560px; margin: 0 auto; padding: 24px 16px 48px; text-align: center; }
