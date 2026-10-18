@@ -195,20 +195,20 @@
         </script>
       {%- endform -%}
 
-      <div class="product__accordions">
-        {%- if product.description != blank -%}
-          <details class="accordion" open>
-            <summary>Description</summary>
-            <div class="accordion__body rte">{{ product.description }}</div>
-          </details>
-        {%- endif -%}
-        {%- for block in section.blocks -%}
-          <details class="accordion" {{ block.shopify_attributes }}>
-            <summary>{{ block.settings.heading }}</summary>
-            <div class="accordion__body rte">{{ block.settings.content }}</div>
-          </details>
-        {%- endfor -%}
-      </div>
+      {%- if product.description != blank -%}
+        <div class="product__description rte">{{ product.description }}</div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="product__accordions">
+          {%- for block in section.blocks -%}
+            <details class="accordion" {{ block.shopify_attributes }}>
+              <summary>{{ block.settings.heading }}</summary>
+              <div class="accordion__body rte">{{ block.settings.content }}</div>
+            </details>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
     </div>
   </div>
 </section>

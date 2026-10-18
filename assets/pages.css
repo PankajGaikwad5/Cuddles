@@ -149,6 +149,7 @@ body:not(.template-index) main { padding-top: var(--header-h); }
 .product__perks li { display: flex; align-items: center; gap: 12px; }
 .product__perks li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: currentColor; opacity: .55; }
 
+.product__description { margin-top: 28px; font-size: 13px; line-height: 1.75; letter-spacing: .04em; }
 .product__accordions { margin-top: 34px; border-top: 1px solid color-mix(in srgb, var(--color-text) 18%, transparent); }
 .accordion { border-bottom: 1px solid color-mix(in srgb, var(--color-text) 18%, transparent); }
 .accordion summary {
