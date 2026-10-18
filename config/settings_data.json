@@ -108,8 +108,8 @@
           "links-help": {
             "type": "links",
             "settings": {
-              "heading": "Help",
-              "links": "FAQ | /pages/faq\nShipping & Returns | /pages/shipping-returns\nContact | /pages/contact\nMy account | /account"
+              "heading": "Quick links",
+              "links": "Contact | /pages/contact\nMy account | /account"
             }
           }
         },
