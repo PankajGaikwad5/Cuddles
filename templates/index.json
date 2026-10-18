@@ -1,8 +1,32 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "hero",
-      "settings": {}
+      "settings": {
+        "video_url": "https://res.cloudinary.com/dfpxvbkwt/video/upload/v1792227536/cuddles_websire_zfbsud.mp4",
+        "poster_url": "https://res.cloudinary.com/dfpxvbkwt/video/upload/so_0/v1792227536/cuddles_websire_zfbsud.jpg",
+        "overlay": 25,
+        "eyebrow": "",
+        "heading": "",
+        "stack_heading": false,
+        "button_label": "Discover the collection",
+        "button_link": "",
+        "show_scroll": true,
+        "text_color": "#fffae9",
+        "left_label": "",
+        "left_link": "",
+        "right_label": "",
+        "right_link": ""
+      }
     },
     "stories": {
       "type": "story-columns",
@@ -10,10 +34,14 @@
         "story-1": {
           "type": "story",
           "settings": {
+            "collection": "",
+            "product": "",
             "image_url": "leftimg.png",
+            "video_url": "",
             "heading": "Made Slowly",
             "text": "<p>Hand-finished pieces in soft, natural fabrics. Made to be lived in and loved for years.</p>",
             "link_label": "Shop now",
+            "link": "",
             "text_position": "below",
             "offset": 0
           }
@@ -21,21 +49,29 @@
         "story-2": {
           "type": "story",
           "settings": {
+            "collection": "",
+            "product": "",
+            "image_url": "",
+            "video_url": "middlevid.mp4",
             "heading": "A Softer Season",
             "text": "<p>Relaxed layers, gentle textures and warm neutrals that bring comfort to autumn dressing.</p>",
             "link_label": "Shop now",
+            "link": "",
             "text_position": "above",
-            "offset": 0,
-            "video_url": "middlevid.mp4"
+            "offset": 0
           }
         },
         "story-3": {
           "type": "story",
           "settings": {
+            "collection": "",
+            "product": "",
             "image_url": "rightimg.png",
+            "video_url": "",
             "heading": "Weekend Ease",
             "text": "<p>Easy favourites you'll reach for all week. Discover our loungewear for slow mornings and long evenings.</p>",
             "link_label": "Shop now",
+            "link": "",
             "text_position": "below",
             "offset": 0
           }
@@ -46,38 +82,43 @@
         "story-2",
         "story-3"
       ],
-      "settings": {}
+      "settings": {
+        "gap": 48
+      }
     },
     "collections": {
       "type": "collection-showcase",
-      "settings": {},
       "blocks": {
         "col-1": {
           "type": "collection",
           "settings": {
-            "collection": "new",
-            "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=1000&q=80"
+            "collection": "bathing-essentials",
+            "image_url": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=1000&q=80",
+            "title": ""
           }
         },
         "col-2": {
           "type": "collection",
           "settings": {
-            "collection": "loungewear",
-            "image_url": "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=1000&q=80"
+            "collection": "rompers",
+            "image_url": "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=1000&q=80",
+            "title": ""
           }
         },
         "col-3": {
           "type": "collection",
           "settings": {
-            "collection": "blankets",
-            "image_url": "https://images.unsplash.com/photo-1584370848010-d7fe6bc767ec?w=1000&q=80"
+            "collection": "dresses",
+            "image_url": "https://images.unsplash.com/photo-1584370848010-d7fe6bc767ec?w=1000&q=80",
+            "title": ""
           }
         },
         "col-4": {
           "type": "collection",
           "settings": {
-            "collection": "accessories",
-            "image_url": "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=1000&q=80"
+            "collection": "swaddles",
+            "image_url": "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=1000&q=80",
+            "title": ""
           }
         }
       },
@@ -86,21 +127,31 @@
         "col-2",
         "col-3",
         "col-4"
-      ]
+      ],
+      "settings": {
+        "heading": "Shop by Collection",
+        "link_label": "View all",
+        "link": "",
+        "columns": 4,
+        "show_count": true
+      }
     },
     "picks": {
       "type": "featured-products",
       "settings": {
+        "eyebrow": "Hand-picked",
+        "heading": "Mia's Picks",
+        "text": "<p>The pieces Mia keeps reaching for this season.</p>",
         "products": [
-          "alpaca-crew-neck",
-          "honey-wool-wrap",
-          "cloud-lounge-set",
-          "heirloom-throw",
-          "bark-merino-roll-neck",
-          "waffle-robe",
-          "cashmere-beanie",
-          "linen-sleep-shirt"
-        ]
+          "tutu-dress-set-hot-pink-birthday",
+          "brown-heart-dress",
+          "bathrobes",
+          "cream-puppy-tee-and-tan-shorts"
+        ],
+        "collection": "",
+        "limit": 8,
+        "link_label": "Shop Mia's Picks",
+        "link": ""
       }
     }
   },

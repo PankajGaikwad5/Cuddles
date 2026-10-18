@@ -1,11 +1,27 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
     "color_background": "#FFFAE9",
     "color_text": "#805B4B",
     "color_accent": "#805B4B",
+    "product_image_ratio": "1 / 1",
+    "product_image_fit": "contain",
+    "collection_image_ratio": "3 / 4",
+    "collection_image_fit": "contain",
     "cart_type": "drawer",
+    "shop_path": "/shop",
     "social_instagram": "https://instagram.com",
     "social_pinterest": "https://pinterest.com",
+    "social_youtube": "https://youtube.com",
+    "social_facebook": "https://facebook.com",
     "sections": {
       "header": {
         "type": "header",
@@ -73,7 +89,11 @@
           "link-5",
           "link-6"
         ],
-        "settings": {}
+        "settings": {
+          "top_text": "#FFFAE9",
+          "solid_bg": "#FFFAE9",
+          "solid_text": "#805B4B"
+        }
       },
       "footer": {
         "type": "footer",
@@ -99,13 +119,6 @@
         ],
         "settings": {}
       }
-    },
-    "social_youtube": "https://youtube.com",
-    "social_facebook": "https://facebook.com",
-    "shop_path": "/shop",
-    "product_image_ratio": "1 / 1",
-    "product_image_fit": "contain",
-    "collection_image_ratio": "3 / 4",
-    "collection_image_fit": "contain"
+    }
   }
 }
