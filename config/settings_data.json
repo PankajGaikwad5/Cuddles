@@ -109,7 +109,7 @@
             "type": "links",
             "settings": {
               "heading": "Quick links",
-              "links": "Contact | /pages/contact\nMy account | /account"
+              "links": "Blogs | /blogs/news\nContact | /pages/contact\nMy account | /account"
             }
           }
         },
