@@ -16,7 +16,6 @@ body:not(.template-index) main { padding-top: var(--header-h); }
   transition: opacity .6s ease, transform 1.4s cubic-bezier(.2,.7,.2,1);
 }
 .product-card__img--alt { opacity: 0; }
-.product-card:hover .product-card__img { transform: scale(1.03); }
 .product-card:hover .product-card__img--alt { opacity: 1; }
 .product-card__badge {
   position: absolute; top: 12px; left: 12px; padding: 6px 10px;

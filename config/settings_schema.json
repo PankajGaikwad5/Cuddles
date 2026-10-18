@@ -69,6 +69,43 @@
             "label": "Fill shape (may crop)"
           }
         ]
+      },
+      {
+        "type": "select",
+        "id": "collection_image_ratio",
+        "label": "Collection image shape",
+        "default": "3 / 4",
+        "info": "Used by Shop by collection and the Collections page. Every tile uses the same shape so rows stay aligned.",
+        "options": [
+          {
+            "value": "1 / 1",
+            "label": "Square"
+          },
+          {
+            "value": "4 / 5",
+            "label": "Portrait"
+          },
+          {
+            "value": "3 / 4",
+            "label": "Tall portrait"
+          }
+        ]
+      },
+      {
+        "type": "select",
+        "id": "collection_image_fit",
+        "label": "Collection image fit",
+        "default": "contain",
+        "options": [
+          {
+            "value": "contain",
+            "label": "Show whole image"
+          },
+          {
+            "value": "cover",
+            "label": "Fill shape (may crop)"
+          }
+        ]
       }
     ]
   },

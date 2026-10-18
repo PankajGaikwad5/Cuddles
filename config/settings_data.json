@@ -104,6 +104,8 @@
     "social_facebook": "https://facebook.com",
     "shop_path": "/shop",
     "product_image_ratio": "1 / 1",
-    "product_image_fit": "contain"
+    "product_image_fit": "contain",
+    "collection_image_ratio": "3 / 4",
+    "collection_image_fit": "contain"
   }
 }

@@ -27,6 +27,8 @@
         --color-accent: {{ settings.color_accent }};
         --product-ratio: {{ settings.product_image_ratio | default: '1 / 1' }};
         --product-fit: {{ settings.product_image_fit | default: 'contain' }};
+        --collection-ratio: {{ settings.collection_image_ratio | default: '3 / 4' }};
+        --collection-fit: {{ settings.collection_image_fit | default: 'contain' }};
       }
     </style>
     {{ 'base.css' | asset_url | stylesheet_tag }}
