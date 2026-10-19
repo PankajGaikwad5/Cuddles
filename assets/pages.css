@@ -263,3 +263,8 @@ body main:has(> :first-child .hero), body main:has(> .hero:first-child) { paddin
   .our-world__item { grid-template-columns: 1fr; gap: 20px; }
   .our-world__item:nth-child(even) .our-world__media { order: 0; }
 }
+
+/* About page opens with a full-screen video: same transparent header as the homepage hero. */
+.template-page--about main { padding-top: 0; }
+.template-page--about .site-header:not(.is-solid):not(.menu-open) { --hdr-text: var(--header-top-text); --hdr-bg: transparent; }
+.template-page--about .site-header:not(.is-solid):not(.menu-open) .cart-link__count { color: var(--color-text); }
