@@ -11,21 +11,72 @@
   "sections": {
     "world": {
       "type": "our-world",
+      "blocks": {
+        "i1": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/new_beginings.png",
+            "heading": "For New Beginnings",
+            "text": "For newborn days, first cuddles and those tiny early moments that deserve the softest essentials."
+          }
+        },
+        "i2": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/little_exploreres.png",
+            "heading": "For Little Explorers",
+            "text": "For babies learning, stretching, crawling, playing and discovering the world one tiny step at a time."
+          }
+        },
+        "i3": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Everyday_moments.png",
+            "heading": "For Everyday Moments",
+            "text": "For messy meals, sleepy mornings, bath time, playtime and all the little routines that make up babyhood."
+          }
+        },
+        "i4": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Special_Days.png",
+            "heading": "For Special Days",
+            "text": "For birthdays, outings, celebrations and all the moments when you want your little one to look extra special."
+          }
+        },
+        "i5": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Gifting.png",
+            "heading": "For Thoughtful Gifting",
+            "text": "For baby showers, newborn gifting, birthdays or simply because there is always a reason to spoil a little one."
+          }
+        },
+        "i6": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Parents.png",
+            "heading": "For Parents",
+            "text": "For parents looking for pieces that feel comfortable, look beautiful and make everyday baby shopping a little easier."
+          }
+        }
+      },
+      "block_order": [
+        "i1",
+        "i2",
+        "i3",
+        "i4",
+        "i5",
+        "i6"
+      ],
       "settings": {
         "heading": "Our World",
         "intro": "Cuddles is made for every little person, and everyone who loves choosing something special for them.",
         "closing": "One little world, made with a whole lot of Cuddles. 🤎"
-      },
-      "blocks": {
-        "i1": { "type": "item", "settings": { "heading": "For New Beginnings", "text": "For newborn days, first cuddles and those tiny early moments that deserve the softest essentials." } },
-        "i2": { "type": "item", "settings": { "heading": "For Little Explorers", "text": "For babies learning, stretching, crawling, playing and discovering the world one tiny step at a time." } },
-        "i3": { "type": "item", "settings": { "heading": "For Everyday Moments", "text": "For messy meals, sleepy mornings, bath time, playtime and all the little routines that make up babyhood." } },
-        "i4": { "type": "item", "settings": { "heading": "For Special Days", "text": "For birthdays, outings, celebrations and all the moments when you want your little one to look extra special." } },
-        "i5": { "type": "item", "settings": { "heading": "For Thoughtful Gifting", "text": "For baby showers, newborn gifting, birthdays or simply because there is always a reason to spoil a little one." } },
-        "i6": { "type": "item", "settings": { "heading": "For Parents", "text": "For parents looking for pieces that feel comfortable, look beautiful and make everyday baby shopping a little easier." } }
-      },
-      "block_order": ["i1", "i2", "i3", "i4", "i5", "i6"]
+      }
     }
   },
-  "order": ["world"]
+  "order": [
+    "world"
+  ]
 }
