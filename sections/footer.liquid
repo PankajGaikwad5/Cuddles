@@ -79,9 +79,10 @@
     <ul class="site-footer__social" aria-label="Follow us">
       {%- for name in socials -%}
         {%- assign key = 'social_' | append: name -%}
-        {%- if settings[key] != blank -%}
+        {%- assign social_url = section.settings[key] | default: settings[key] -%}
+        {%- if social_url != blank -%}
           <li>
-            <a href="{{ settings[key] }}" target="_blank" rel="noopener" aria-label="{{ name | capitalize }}" class="social-link">
+            <a href="{{ social_url }}" target="_blank" rel="noopener" aria-label="{{ name | capitalize }}" class="social-link">
               {% render 'icon', name: name %}
             </a>
           </li>
@@ -98,7 +99,12 @@
     { "type": "checkbox", "id": "show_newsletter", "label": "Show newsletter signup", "default": true },
     { "type": "text", "id": "newsletter_heading", "label": "Newsletter heading", "default": "Stay close" },
     { "type": "richtext", "id": "newsletter_text", "label": "Newsletter text", "default": "<p>New pieces, slow stories and early access, a few times a season.</p>" },
-    { "type": "checkbox", "id": "show_policies", "label": "Show policy links", "info": "Add policies in Settings > Policies.", "default": true }
+    { "type": "checkbox", "id": "show_policies", "label": "Show policy links", "info": "Add policies in Settings > Policies.", "default": true },
+    { "type": "header", "content": "Social links" },
+    { "type": "text", "id": "social_instagram", "label": "Instagram", "info": "https://instagram.com/yourstore. Empty falls back to Theme settings > Social media." },
+    { "type": "text", "id": "social_facebook", "label": "Facebook" },
+    { "type": "text", "id": "social_pinterest", "label": "Pinterest" },
+    { "type": "text", "id": "social_youtube", "label": "YouTube" }
   ],
   "blocks": [
     {
