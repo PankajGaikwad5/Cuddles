@@ -1,4 +1,4 @@
-<section class="about-video">
+<section class="hero about-hero" style="--hero-overlay: 0.15; --hero-text: #fffae9;">
   {%- liquid
     # URL field accepts a full URL or the file name of a theme asset (e.g. middlevid.mp4).
     assign video_src = section.settings.video_url
@@ -8,14 +8,19 @@
       endunless
     endif
   -%}
-  <div class="about-video__frame">
+  <div class="hero__media">
     {%- if section.settings.video != blank -%}
-      {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, preload: 'metadata', image_size: '1600x' }}
+      {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, class: 'hero__video', image_size: '1600x' }}
     {%- elsif video_src != blank -%}
-      <video src="{{ video_src }}" autoplay muted loop playsinline preload="metadata"></video>
-    {%- else -%}
-      <div class="about-video__placeholder"></div>
+      <video class="hero__video" src="{{ video_src }}" autoplay muted loop playsinline preload="metadata"></video>
     {%- endif -%}
+    <div class="hero__overlay" aria-hidden="true"></div>
+  </div>
+
+  <div class="hero__content">
+    <button type="button" class="hero__scroll" aria-label="Scroll down" data-scroll-down>
+      {% render 'icon', name: 'chevron-down' %}
+    </button>
   </div>
 </section>
 

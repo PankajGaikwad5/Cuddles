@@ -132,8 +132,7 @@
         "heading": "Shop by Collection",
         "link_label": "View all",
         "link": "",
-        "columns": 4,
-        "show_count": true
+        "columns": 4
       }
     },
     "picks": {

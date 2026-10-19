@@ -345,8 +345,8 @@ a.button-solid { display: inline-flex; align-items: center; justify-content: cen
 .showcase__tile { display: block; }
 .showcase__media { position: relative; aspect-ratio: var(--collection-ratio, 3 / 4); overflow: hidden; background: transparent; }
 .showcase__media img, .showcase__media svg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: var(--collection-fit, contain); transition: transform 1.4s cubic-bezier(.2,.7,.2,1); }
-.showcase__info { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-top: 16px; }
-.showcase__title { margin: 0; font-size: clamp(13px, 1.1vw, 15px); font-weight: 400; letter-spacing: .16em; text-transform: uppercase; position: relative; }
+.showcase__info { display: flex; align-items: baseline; justify-content: center; text-align: center; gap: 12px; padding-top: 16px; }
+.showcase__title { margin: 0; font-size: clamp(15px, 1.35vw, 18px); font-weight: 400; letter-spacing: .16em; text-transform: uppercase; position: relative; }
 .showcase__title::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor;
   transform: scaleX(0); transform-origin: left; transition: transform .45s cubic-bezier(.7,0,.2,1);

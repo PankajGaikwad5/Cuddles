@@ -243,11 +243,6 @@ body:not(.template-index) main { padding-top: var(--header-h); }
 .about-story--text-only { grid-template-columns: minmax(0, 720px); justify-content: center; text-align: center; padding-top: clamp(32px, 5vw, 64px); }
 .about-story--text-only .about-story__closing { border-top: 0; padding-top: 0; }
 
-/* ---------------- About video ---------------- */
-.about-video { padding: clamp(24px, 3vw, 40px) clamp(16px, 3.6vw, 50px) 0; }
-.about-video__frame { max-width: 1280px; margin: 0 auto; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 4px; background: color-mix(in srgb, var(--color-text) 8%, transparent); }
-.about-video__frame video, .about-video__placeholder { display: block; width: 100%; height: 100%; object-fit: cover; }
-
 /* ---------------- Our World ---------------- */
 .our-world { max-width: 1180px; margin: 0 auto; padding: clamp(40px, 6vw, 88px) clamp(16px, 3.6vw, 50px) clamp(64px, 9vw, 130px); }
 .our-world__intro { max-width: 640px; margin: 0 auto clamp(48px, 7vw, 96px); text-align: center; }
