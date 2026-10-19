@@ -12,7 +12,7 @@
     "video": {
       "type": "about-video",
       "settings": {
-        "video": "shopify://files/videos/aboutus.mp4",
+        "video": "shopify://files/videos/about us.mp4",
         "video_url": ""
       }
     },
