@@ -1,4 +1,4 @@
-<section class="about-story about-story--image-{{ section.settings.image_position }}">
+<section class="about-story about-story--image-{{ section.settings.image_position }}{% if section.settings.image == blank and section.settings.image_url == blank %} about-story--text-only{% endif %}">
   {%- liquid
     # URL field accepts a full URL or the file name of a theme asset (e.g. leftimg.png).
     assign image = section.settings.image
@@ -10,15 +10,15 @@
     endif
   -%}
 
-  <div class="about-story__media">
-    {%- if image != blank -%}
-      {{ image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 50vw, 100vw', alt: section.settings.heading }}
-    {%- elsif image_src != blank -%}
-      <img src="{{ image_src }}" alt="{{ section.settings.heading | escape }}" loading="lazy">
-    {%- else -%}
-      <div class="about-story__placeholder"></div>
-    {%- endif -%}
-  </div>
+  {%- if image != blank or image_src != blank -%}
+    <div class="about-story__media">
+      {%- if image != blank -%}
+        {{ image | image_url: width: 1400 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 50vw, 100vw', alt: section.settings.heading }}
+      {%- else -%}
+        <img src="{{ image_src }}" alt="{{ section.settings.heading | escape }}" loading="lazy">
+      {%- endif -%}
+    </div>
+  {%- endif -%}
 
   <div class="about-story__content">
     {%- if section.settings.eyebrow != blank -%}

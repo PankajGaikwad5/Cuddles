@@ -1,0 +1,56 @@
+<section class="our-world">
+  <header class="our-world__intro">
+    {%- if section.settings.heading != blank -%}
+      <h1 class="our-world__title">{{ section.settings.heading }}</h1>
+    {%- endif -%}
+    {%- if section.settings.intro != blank -%}
+      <p class="our-world__lead">{{ section.settings.intro }}</p>
+    {%- endif -%}
+  </header>
+
+  <div class="our-world__list">
+    {%- for block in section.blocks -%}
+      <article class="our-world__item" {{ block.shopify_attributes }}>
+        <div class="our-world__media">
+          {%- if block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 1200 | image_tag: loading: 'lazy', sizes: '(min-width: 750px) 45vw, 100vw', alt: block.settings.heading }}
+          {%- else -%}
+            <div class="our-world__placeholder"></div>
+          {%- endif -%}
+        </div>
+        <div class="our-world__body">
+          <span class="our-world__num">{{ forloop.index | prepend: '0' }}</span>
+          <h2 class="our-world__heading">{{ block.settings.heading }}</h2>
+          <p class="our-world__text">{{ block.settings.text }}</p>
+        </div>
+      </article>
+    {%- endfor -%}
+  </div>
+
+  {%- if section.settings.closing != blank -%}
+    <p class="our-world__closing">{{ section.settings.closing }}</p>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Our World",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Our World" },
+    { "type": "textarea", "id": "intro", "label": "Intro" },
+    { "type": "text", "id": "closing", "label": "Closing line" }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "For little moments" },
+        { "type": "textarea", "id": "text", "label": "Text" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Our World" }]
+}
+{% endschema %}

@@ -66,7 +66,7 @@
             "type": "link",
             "settings": {
               "title": "Our World",
-              "link": "/blogs/news",
+              "link": "/pages/our-world",
               "position": "right",
               "dropdown": "none"
             }

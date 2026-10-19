@@ -1,0 +1,31 @@
+<section class="about-video">
+  {%- liquid
+    # URL field accepts a full URL or the file name of a theme asset (e.g. middlevid.mp4).
+    assign video_src = section.settings.video_url
+    if video_src != blank
+      unless video_src contains '/'
+        assign video_src = video_src | asset_url
+      endunless
+    endif
+  -%}
+  <div class="about-video__frame">
+    {%- if section.settings.video != blank -%}
+      {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, preload: 'metadata', image_size: '1600x' }}
+    {%- elsif video_src != blank -%}
+      <video src="{{ video_src }}" autoplay muted loop playsinline preload="metadata"></video>
+    {%- else -%}
+      <div class="about-video__placeholder"></div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "About video",
+  "settings": [
+    { "type": "video", "id": "video", "label": "Video (upload)" },
+    { "type": "text", "id": "video_url", "label": "Video URL (.mp4) fallback", "info": "Used when no video is uploaded. Full URL, or a file name from the theme assets folder." }
+  ],
+  "presets": [{ "name": "About video" }]
+}
+{% endschema %}

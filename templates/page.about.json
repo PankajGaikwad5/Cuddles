@@ -1,9 +1,10 @@
 {
   "sections": {
+    "video": { "type": "about-video", "settings": {} },
     "story": {
       "type": "about-story",
       "settings": {
-        "image_url": "leftimg.png",
+        "image_url": "",
         "image_position": "left",
         "eyebrow": "About Cuddles",
         "heading": "Cuddles by Mia & Co.",
@@ -12,5 +13,5 @@
       }
     }
   },
-  "order": ["story"]
+  "order": ["video", "story"]
 }
