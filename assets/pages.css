@@ -1,5 +1,7 @@
 /* ---------------- Inner pages ---------------- */
 body:not(.template-index) main { padding-top: var(--header-h); }
+/* Pages that open with a hero/video sit under the transparent header, like the homepage. */
+body main:has(> :first-child .hero), body main:has(> .hero:first-child) { padding-top: 0; }
 
 /* ---------------- Product grid & card ---------------- */
 .product-grid {
