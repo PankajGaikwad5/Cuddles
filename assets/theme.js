@@ -87,6 +87,8 @@
   /* ---------------- Header ---------------- */
   const header = $('[data-header]');
   if (header) {
+    // Transparent over any page that opens with a hero (home, About), regardless of template name.
+    if (header.dataset.transparent === 'true' && $('#MainContent > :first-child.hero, #MainContent > :first-child .hero')) header.classList.add('site-header--transparent');
     const SOLID_AT = 40;
     let ticking = false;
     let lastY = window.scrollY;

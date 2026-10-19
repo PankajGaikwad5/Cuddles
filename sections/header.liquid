@@ -1,5 +1,6 @@
 
 <header
+  data-transparent="{{ section.settings.transparent }}"
   class="site-header{% if section.settings.transparent and ((template.name == 'index' and template.suffix == blank) or (template.name == 'page' and template.suffix == 'about')) %} site-header--transparent{% endif %}"
   data-header
   style="
