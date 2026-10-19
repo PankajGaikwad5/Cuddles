@@ -124,6 +124,15 @@
         toggle.setAttribute('aria-expanded', String(open));
         open ? lockScroll() : unlockScroll();
       });
+
+      $$('[data-mobile-expand]', menu).forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const list = btn.closest('[data-mobile-group]').querySelector('.mobile-menu__children');
+          const expand = list.hidden;
+          list.hidden = !expand;
+          btn.setAttribute('aria-expanded', String(expand));
+        });
+      });
     }
   }
 

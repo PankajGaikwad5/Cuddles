@@ -72,7 +72,7 @@
     </div>
   </div>
 
-  <div class="mobile-menu" data-mobile-menu hidden>
+  <div class="mobile-menu" data-mobile-menu data-lenis-prevent hidden>
     <nav class="mobile-menu__nav">
       {%- for block in section.blocks -%}
         {% render 'nav-item', title: block.settings.title, url: block.settings.link, mode: block.settings.dropdown, menu: linklists[block.settings.menu], variant: 'mobile' %}

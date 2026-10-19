@@ -47,8 +47,19 @@
 {%- endcapture -%}
 
 {%- if variant == 'mobile' -%}
-  <a href="{{ href }}" class="mobile-menu__link">{{ title }}</a>
-  {%- if has_children -%}<ul class="mobile-menu__children">{{ children }}</ul>{%- endif -%}
+  {%- if has_children -%}
+    <div class="mobile-menu__group" data-mobile-group>
+      <div class="mobile-menu__row">
+        <a href="{{ href }}" class="mobile-menu__link">{{ title }}</a>
+        <button type="button" class="mobile-menu__expand" aria-expanded="false" aria-label="Show {{ title | escape }} links" data-mobile-expand>
+          {% render 'icon', name: 'chevron-down' %}
+        </button>
+      </div>
+      <ul class="mobile-menu__children" hidden>{{ children }}</ul>
+    </div>
+  {%- else -%}
+    <a href="{{ href }}" class="mobile-menu__link">{{ title }}</a>
+  {%- endif -%}
 {%- elsif has_children -%}
   <div class="nav-item nav-item--dropdown">
     <a href="{{ href }}" class="nav-link" aria-haspopup="true">

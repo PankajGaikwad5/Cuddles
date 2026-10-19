@@ -163,6 +163,7 @@ main:focus { outline: none; }
 
 .mobile-menu {
   position: fixed; inset: var(--header-h) 0 0; overflow-y: auto;
+  overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
   background: var(--header-solid-bg); color: var(--header-solid-text);
   padding: 24px var(--gutter) 48px;
 }
