@@ -609,4 +609,16 @@
     });
     fill();
   });
+
+  /* ---------------- Tab title when away ---------------- */
+  const awayTitle = 'Little Ones Waiting';
+  let homeTitle = document.title;
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      homeTitle = document.title;
+      document.title = awayTitle;
+    } else {
+      document.title = homeTitle;
+    }
+  });
 })();
