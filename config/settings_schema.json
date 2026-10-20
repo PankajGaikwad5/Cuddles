@@ -8,6 +8,49 @@
     "theme_support_url": "https://shopify.dev/docs/storefronts/themes"
   },
   {
+    "name": "Coming soon",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "coming_soon_enabled",
+        "label": "Lock the store behind a countdown",
+        "default": true,
+        "info": "Visitors only see the countdown until the launch time, then the store opens by itself. The theme editor always shows the store."
+      },
+      {
+        "type": "text",
+        "id": "coming_soon_launch",
+        "label": "Launch time",
+        "default": "2026-10-20T22:50:00+05:30",
+        "info": "Format: YYYY-MM-DDTHH:MM:SS+05:30 (IST). Example: 2026-10-20T22:50:00+05:30 is 10:50 PM IST, 20 Oct 2026."
+      },
+      {
+        "type": "image_picker",
+        "id": "coming_soon_logo",
+        "label": "Logo",
+        "info": "Single-color logo, recolored to the text color. Defaults to the header logo artwork."
+      },
+      {
+        "type": "text",
+        "id": "coming_soon_eyebrow",
+        "label": "Eyebrow",
+        "default": "Coming soon"
+      },
+      {
+        "type": "text",
+        "id": "coming_soon_heading",
+        "label": "Heading",
+        "default": "Something soft is on its way."
+      },
+      {
+        "type": "textarea",
+        "id": "coming_soon_text",
+        "label": "Message",
+        "default": "Our first collection drops tonight. Stay close."
+      }
+    ]
+  },
+  {
     "name": "Colors",
     "settings": [
       {

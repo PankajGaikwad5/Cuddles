@@ -9,6 +9,11 @@
  */
 {
   "current": {
+    "coming_soon_enabled": true,
+    "coming_soon_launch": "2026-10-20T22:50:00+05:30",
+    "coming_soon_eyebrow": "Coming soon",
+    "coming_soon_heading": "Something soft is on its way.",
+    "coming_soon_text": "Our first collection drops tonight. Stay close.",
     "color_background": "#FFFAE9",
     "color_text": "#805B4B",
     "color_accent": "#805B4B",

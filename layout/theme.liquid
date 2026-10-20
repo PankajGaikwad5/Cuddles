@@ -1,5 +1,16 @@
+{%- liquid
+  # Coming-soon lock: shown until the launch time in Theme settings > Coming soon. Skipped in the theme editor.
+  assign coming_soon = false
+  if settings.coming_soon_enabled and settings.coming_soon_launch != blank and request.design_mode != true
+    assign launch_ts = settings.coming_soon_launch | date: '%s' | plus: 0
+    assign now_ts = 'now' | date: '%s' | plus: 0
+    if launch_ts > now_ts
+      assign coming_soon = true
+    endif
+  endif
+-%}
 <!doctype html>
-<html lang="{{ request.locale.iso_code }}">
+<html lang="{{ request.locale.iso_code }}"{% if coming_soon %} class="is-coming-soon"{% endif %}>
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -55,6 +66,7 @@
   </head>
 
   <body class="template-{{ template.name }}{% if template.suffix != blank %}--{{ template.suffix }}{% endif %}">
+    {%- if coming_soon -%}{% render 'coming-soon', launch: settings.coming_soon_launch %}{%- endif -%}
     <a class="skip-link" href="#MainContent">Skip to content</a>
     {% section 'header' %}
 

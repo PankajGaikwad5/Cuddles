@@ -1,0 +1,158 @@
+{%- comment -%}
+  Full-screen launch countdown. layout/theme.liquid renders it (and puts .is-coming-soon on <html>)
+  only while the launch time from Theme settings > Coming soon is still ahead. The inline script
+  re-checks the time in the browser, so cached pages unlock on schedule without a reload.
+  Accepts: launch (ISO 8601 string, e.g. 2026-10-20T22:50:00+05:30)
+{%- endcomment -%}
+{%- liquid
+  assign logo_src = 'https://res.cloudinary.com/dfpxvbkwt/image/upload/e_trim/v1792226846/white_logo_fvmamm.png'
+  if settings.coming_soon_logo != blank
+    assign logo_src = settings.coming_soon_logo | image_url: width: 600
+  endif
+-%}
+<style>
+  html.is-coming-soon, html.is-coming-soon body { overflow: hidden; height: 100%; }
+  html.is-coming-soon body > :not(.coming-soon) { display: none !important; }
+
+  .coming-soon {
+    position: fixed; inset: 0; z-index: 1000;
+    display: grid; grid-template-rows: auto 1fr auto; justify-items: center;
+    padding: clamp(28px, 5vw, 56px) var(--gutter);
+    background:
+      radial-gradient(120% 80% at 50% 0%, color-mix(in srgb, var(--color-text) 7%, transparent), transparent 60%),
+      var(--color-bg);
+    color: var(--color-text);
+    text-align: center;
+    transition: opacity .9s ease, visibility .9s;
+  }
+  .coming-soon.is-leaving { opacity: 0; visibility: hidden; }
+  html:not(.is-coming-soon) .coming-soon:not(.is-leaving) { display: none; }
+
+  .coming-soon__logo {
+    display: block; width: clamp(150px, 22vw, 230px); aspect-ratio: 3.763;
+    background: currentColor;
+    -webkit-mask: var(--logo) center / contain no-repeat;
+    mask: var(--logo) center / contain no-repeat;
+  }
+
+  .coming-soon__main { align-self: center; display: grid; justify-items: center; gap: clamp(22px, 3.4vw, 36px); }
+  .coming-soon__eyebrow {
+    display: flex; align-items: center; gap: 14px; margin: 0;
+    font-size: 11px; letter-spacing: .32em; text-transform: uppercase;
+  }
+  .coming-soon__eyebrow::before, .coming-soon__eyebrow::after {
+    content: ''; width: 36px; height: 1px; background: currentColor; opacity: .4;
+  }
+  .coming-soon__heading {
+    margin: 0; max-width: 16ch;
+    font-family: var(--font-display); font-weight: 400;
+    font-size: clamp(30px, 5.2vw, 60px); line-height: 1.08; letter-spacing: .01em;
+  }
+  .coming-soon__text { margin: 0; max-width: 38ch; font-size: 15px; line-height: 1.6; opacity: .8; }
+
+  .countdown { display: flex; align-items: flex-start; margin: clamp(8px, 2vw, 20px) 0 0; padding: 0; }
+  .countdown__unit {
+    display: grid; justify-items: center; gap: 12px;
+    padding: 0 clamp(14px, 3.4vw, 44px);
+  }
+  .countdown__unit + .countdown__unit { border-left: 1px solid color-mix(in srgb, currentColor 22%, transparent); }
+  .countdown__unit[hidden] { display: none; }
+  .countdown__value {
+    min-width: 2ch;
+    font-size: clamp(48px, 11vw, 132px); line-height: .9; font-weight: 400;
+    font-variant-numeric: tabular-nums;
+  }
+  .countdown__label { font-size: 10px; letter-spacing: .28em; text-transform: uppercase; opacity: .7; }
+
+  .coming-soon__foot { margin: 0; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; opacity: .7; }
+
+  @media (max-width: 480px) {
+    .countdown__unit { padding: 0 12px; gap: 8px; }
+    .countdown__label { font-size: 9px; letter-spacing: .2em; }
+  }
+  @media (prefers-reduced-motion: reduce) { .coming-soon { transition: none; } }
+</style>
+
+<div class="coming-soon" data-coming-soon data-launch="{{ launch | escape }}" role="dialog" aria-modal="true" aria-labelledby="ComingSoonHeading">
+  <span class="coming-soon__logo" style="--logo: url('{{ logo_src }}');" role="img" aria-label="{{ shop.name | escape }}"></span>
+
+  <div class="coming-soon__main">
+    <p class="coming-soon__eyebrow">{{ settings.coming_soon_eyebrow | default: 'Coming soon' | escape }}</p>
+    <h1 class="coming-soon__heading" id="ComingSoonHeading">{{ settings.coming_soon_heading | default: 'Something soft is on its way.' | escape }}</h1>
+    {%- if settings.coming_soon_text != blank -%}
+      <p class="coming-soon__text">{{ settings.coming_soon_text | escape }}</p>
+    {%- endif -%}
+
+    <div class="countdown" role="timer" aria-live="off">
+      <div class="countdown__unit" data-unit="days" hidden>
+        <span class="countdown__value" data-value>00</span>
+        <span class="countdown__label">Days</span>
+      </div>
+      <div class="countdown__unit">
+        <span class="countdown__value" data-value="hours">00</span>
+        <span class="countdown__label">Hours</span>
+      </div>
+      <div class="countdown__unit">
+        <span class="countdown__value" data-value="minutes">00</span>
+        <span class="countdown__label">Minutes</span>
+      </div>
+      <div class="countdown__unit">
+        <span class="countdown__value" data-value="seconds">00</span>
+        <span class="countdown__label">Seconds</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="coming-soon__foot" data-launch-label>Doors open soon</p>
+</div>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var el = document.querySelector('[data-coming-soon]');
+    var launch = Date.parse(el.dataset.launch);
+    if (isNaN(launch)) { root.classList.remove('is-coming-soon'); return; }
+
+    var days = el.querySelector('[data-unit="days"]');
+    var values = {
+      days: days.querySelector('[data-value]'),
+      hours: el.querySelector('[data-value="hours"]'),
+      minutes: el.querySelector('[data-value="minutes"]'),
+      seconds: el.querySelector('[data-value="seconds"]')
+    };
+    var pad = function (n) { return n < 10 ? '0' + n : String(n); };
+
+    try {
+      el.querySelector('[data-launch-label]').textContent = 'Doors open ' + new Intl.DateTimeFormat('en-IN', {
+        timeZone: 'Asia/Kolkata', weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit'
+      }).format(launch).replace(/\b(am|pm)\b/i, function (m) { return m.toUpperCase(); }) + ' IST';
+    } catch (e) {}
+
+    var timer;
+    var open = function () {
+      clearInterval(timer);
+      el.classList.add('is-leaving');
+      root.classList.remove('is-coming-soon');
+      window.dispatchEvent(new Event('resize'));
+      setTimeout(function () { el.remove(); }, 1000);
+    };
+    var tick = function () {
+      var left = Math.max(0, Math.floor((launch - Date.now()) / 1000));
+      if (!left) return open();
+      var d = Math.floor(left / 86400);
+      days.hidden = d === 0;
+      values.days.textContent = pad(d);
+      values.hours.textContent = pad(Math.floor(left / 3600) % 24);
+      values.minutes.textContent = pad(Math.floor(left / 60) % 60);
+      values.seconds.textContent = pad(left % 60);
+    };
+
+    if (launch <= Date.now()) {
+      root.classList.remove('is-coming-soon');
+      el.remove();
+      return;
+    }
+    tick();
+    timer = setInterval(tick, 1000);
+  })();
+</script>
