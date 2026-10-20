@@ -128,17 +128,30 @@
       }).format(launch).replace(/\b(am|pm)\b/i, function (m) { return m.toUpperCase(); }) + ' IST';
     } catch (e) {}
 
+    // The visitor's clock can be off, so correct it with the Date header from Shopify's servers.
+    // Until that answer arrives (or 4s pass) the countdown never opens the store early.
+    var offset = 0;
+    var synced = false;
+    var now = function () { return Date.now() + offset; };
+
     var timer;
+    var opened = false;
     var open = function () {
+      if (opened) return;
+      opened = true;
       clearInterval(timer);
       el.classList.add('is-leaving');
       root.classList.remove('is-coming-soon');
       window.dispatchEvent(new Event('resize'));
+      document.querySelectorAll('video[autoplay]').forEach(function (v) {
+        var p = v.play();
+        if (p && p.catch) p.catch(function () {});
+      });
       setTimeout(function () { el.remove(); }, 1000);
     };
     var tick = function () {
-      var left = Math.max(0, Math.floor((launch - Date.now()) / 1000));
-      if (!left) return open();
+      var left = Math.max(0, Math.ceil((launch - now()) / 1000));
+      if (!left && synced) return open();
       var d = Math.floor(left / 86400);
       days.hidden = d === 0;
       values.days.textContent = pad(d);
@@ -147,12 +160,25 @@
       values.seconds.textContent = pad(left % 60);
     };
 
-    if (launch <= Date.now()) {
-      root.classList.remove('is-coming-soon');
-      el.remove();
-      return;
-    }
+    var markSynced = function () {
+      if (synced) return;
+      synced = true;
+      tick();
+    };
+    fetch('/', { method: 'HEAD', cache: 'no-store', credentials: 'same-origin' })
+      .then(function (res) {
+        var server = Date.parse(res.headers.get('Date'));
+        if (!isNaN(server)) offset = server - Date.now();
+      })
+      .catch(function () {})
+      .then(markSynced);
+    setTimeout(markSynced, 4000);
+
+    // A cached copy of the page served well after launch: open straight away.
+    if (Date.now() - launch > 10 * 60 * 1000) synced = true;
     tick();
     timer = setInterval(tick, 1000);
+    // Background tabs throttle timers; catch up as soon as the tab is visible again.
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) tick(); });
   })();
 </script>
