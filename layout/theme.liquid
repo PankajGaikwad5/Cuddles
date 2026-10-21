@@ -14,6 +14,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="google-site-verification" content="QRrsQ9gNT8f4tbhR9XI0yyxNIwnc2OlmbNxRVgCdNHI">
     <link rel="canonical" href="{{ canonical_url }}">
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
@@ -27,7 +28,11 @@
     {%- if page_description -%}
       <meta name="description" content="{{ page_description | escape }}">
     {%- endif -%}
+    {%- if request.page_type == 'cart' or request.page_type == 'search' or request.page_type contains 'customers/' -%}
+      <meta name="robots" content="noindex, follow">
+    {%- endif -%}
     {% render 'meta-tags' %}
+    {% render 'structured-data' %}
 
     {% render 'font-face' %}
 

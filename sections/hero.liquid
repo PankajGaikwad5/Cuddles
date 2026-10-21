@@ -33,6 +33,9 @@
           {{ section.settings.heading }}
         {%- endif -%}
       </h1>
+    {%- elsif template.name == 'index' and template.suffix == blank -%}
+      {%- comment -%}Homepage still needs an H1 for search engines when the hero heading is left empty.{%- endcomment -%}
+      <h1 class="visually-hidden">{{ settings.seo_home_heading | default: page_title | default: shop.name | escape }}</h1>
     {%- endif -%}
 
     {%- if section.settings.text != blank -%}

@@ -197,6 +197,23 @@
     ]
   },
   {
+    "name": "Search & sharing",
+    "settings": [
+      {
+        "type": "text",
+        "id": "seo_home_heading",
+        "label": "Homepage heading for search engines",
+        "info": "Hidden from shoppers. Used as the homepage H1 when the hero heading is empty. Example: Cuddles – soft cotton baby clothes made in India"
+      },
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Social share image",
+        "info": "Shown when links to pages without their own image are shared (WhatsApp, Instagram, Facebook). 1200 × 630px recommended."
+      }
+    ]
+  },
+  {
     "name": "Social media",
     "settings": [
       {
