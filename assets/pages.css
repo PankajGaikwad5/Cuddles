@@ -199,11 +199,15 @@ body main:has(> :first-child .hero), body main:has(> .hero:first-child) { paddin
   border-bottom: 1px solid currentColor; padding-bottom: 2px; opacity: .8;
 }
 .product-form__view:hover { opacity: 1; }
+/* Price on the left, Copy link pill on the right, directly under the title. */
+.product__price-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; }
+.product__price-row .product__price { margin: 0; }
 .product-share {
-  display: inline-flex; align-items: center; gap: 8px; margin-top: 22px;
-  font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .75; transition: opacity .2s ease;
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 16px;
+  border: 1px solid var(--color-text); border-radius: 999px;
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase; transition: background .2s ease, color .2s ease;
 }
-.product-share:hover, .product-share.is-copied { opacity: 1; }
+.product-share:hover, .product-share.is-copied { background: var(--color-text); color: var(--color-bg); }
 .product-share .icon { width: 14px; height: 14px; }
 @keyframes stepper-in { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
 

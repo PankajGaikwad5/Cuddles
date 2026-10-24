@@ -66,12 +66,18 @@
 
       <h1 class="product__title">{{ product.title }}</h1>
 
-      <p class="product__price" data-price>
-        {{ current_variant.price | money }}
-        {%- if current_variant.compare_at_price > current_variant.price -%}
-          <s>{{ current_variant.compare_at_price | money }}</s>
-        {%- endif -%}
-      </p>
+      <div class="product__price-row">
+        <p class="product__price" data-price>
+          {{ current_variant.price | money }}
+          {%- if current_variant.compare_at_price > current_variant.price -%}
+            <s>{{ current_variant.compare_at_price | money }}</s>
+          {%- endif -%}
+        </p>
+        <button type="button" class="product-share" data-copy-link="{{ product.url }}">
+          {%- render 'icon', name: 'link' -%}
+          <span data-copy-label aria-live="polite">Copy link</span>
+        </button>
+      </div>
       {%- if cart.taxes_included -%}
         <p class="product__tax">Tax included.</p>
       {%- endif -%}
@@ -169,11 +175,6 @@
           ]
         </script>
       {%- endform -%}
-
-      <button type="button" class="product-share" data-copy-link="{{ product.url }}">
-        {%- render 'icon', name: 'link' -%}
-        <span data-copy-label aria-live="polite">Copy link</span>
-      </button>
 
       {%- if product.description != blank -%}
         <div class="product__description rte">{{ product.description }}</div>
