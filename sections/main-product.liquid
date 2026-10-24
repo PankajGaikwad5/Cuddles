@@ -64,20 +64,20 @@
         <a href="{{ routes.root_url }}">Home</a><span>/</span><a href="{{ routes.all_products_collection_url }}">Shop</a>
       </p>
 
-      <div class="product__title-row">
-        <h1 class="product__title">{{ product.title }}</h1>
-        <button type="button" class="product-share" data-copy-link="{{ product.url }}" aria-label="Copy link">
+      <h1 class="product__title">{{ product.title }}</h1>
+
+      <div class="product__price-row">
+        <p class="product__price" data-price>
+          {{ current_variant.price | money }}
+          {%- if current_variant.compare_at_price > current_variant.price -%}
+            <s>{{ current_variant.compare_at_price | money }}</s>
+          {%- endif -%}
+        </p>
+        <button type="button" class="product-share" data-copy-link="{{ product.url }}">
           <span class="product-share__icon">{%- render 'icon', name: 'link' -%}{%- render 'icon', name: 'check' -%}</span>
-          <span class="product-share__tip" data-copy-label aria-live="polite">Copy link</span>
+          <span data-copy-label aria-live="polite">Copy link</span>
         </button>
       </div>
-
-      <p class="product__price" data-price>
-        {{ current_variant.price | money }}
-        {%- if current_variant.compare_at_price > current_variant.price -%}
-          <s>{{ current_variant.compare_at_price | money }}</s>
-        {%- endif -%}
-      </p>
       {%- if cart.taxes_included -%}
         <p class="product__tax">Tax included.</p>
       {%- endif -%}

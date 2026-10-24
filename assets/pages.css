@@ -199,29 +199,21 @@ body main:has(> :first-child .hero), body main:has(> .hero:first-child) { paddin
   border-bottom: 1px solid currentColor; padding-bottom: 2px; opacity: .8;
 }
 .product-form__view:hover { opacity: 1; }
-/* Quiet icon beside the title; its label fades in on hover / after copying. */
-.product__title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
-.product-share { position: relative; flex-shrink: 0; margin-top: 2px; }
-.product-share__icon {
-  position: relative; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%;
-  opacity: .6; transition: opacity .35s ease, background-color .35s ease;
+/* Price on the left, a soft tinted Copy link chip on the right. */
+.product__price-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 14px; }
+.product__price-row .product__price { margin: 0; }
+.product-share {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 14px 0 12px; border-radius: 999px;
+  background: color-mix(in srgb, var(--color-text) 7%, transparent);
+  font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  transition: background-color .35s ease;
 }
-.product-share__icon .icon { grid-area: 1 / 1; width: 15px; height: 15px; transition: opacity .35s ease, transform .35s cubic-bezier(.2,.7,.2,1); }
+.product-share:hover, .product-share:focus-visible, .product-share.is-copied { background: color-mix(in srgb, var(--color-text) 13%, transparent); }
+.product-share__icon { display: grid; place-items: center; }
+.product-share__icon .icon { grid-area: 1 / 1; width: 14px; height: 14px; transition: opacity .35s ease, transform .35s cubic-bezier(.2,.7,.2,1); }
 .product-share__icon .icon--check { opacity: 0; transform: scale(.6); }
-.product-share:hover .product-share__icon, .product-share:focus-visible .product-share__icon, .product-share.is-copied .product-share__icon {
-  opacity: 1; background-color: color-mix(in srgb, var(--color-text) 8%, transparent);
-}
 .product-share.is-copied .icon--link { opacity: 0; transform: scale(.6); }
 .product-share.is-copied .icon--check { opacity: 1; transform: none; }
-.product-share__tip {
-  position: absolute; top: calc(100% + 4px); right: 0; white-space: nowrap; pointer-events: none;
-  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
-  opacity: 0; transform: translateY(-3px); transition: opacity .35s ease, transform .35s cubic-bezier(.2,.7,.2,1);
-}
-.product-share:hover .product-share__tip, .product-share:focus-visible .product-share__tip, .product-share.is-copied .product-share__tip {
-  opacity: .75; transform: none;
-}
-@media (hover: none) { .product-share__icon { opacity: .8; } }
 @keyframes stepper-in { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
 
 /* Product accordions match the highlights list: small, sentence case, light tracking. */
