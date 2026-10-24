@@ -131,6 +131,7 @@
               assign loading = 'eager'
             endif
           -%}
+          {%- if product.id == settings.gift_box_product.id %}{% continue %}{% endif -%}
           {% render 'product-card', product: product, loading: loading %}
         {%- endfor -%}
       </div>

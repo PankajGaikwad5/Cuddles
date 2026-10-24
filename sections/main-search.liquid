@@ -26,6 +26,7 @@
           {%- for item in search.results -%}
             {%- case item.object_type -%}
               {%- when 'product' -%}
+                {%- if item.id == settings.gift_box_product.id %}{% continue %}{% endif -%}
                 {% render 'product-card', product: item, loading: 'lazy' %}
               {%- else -%}
                 <a href="{{ item.url }}" class="result-card">

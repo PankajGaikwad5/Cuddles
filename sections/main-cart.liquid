@@ -46,8 +46,14 @@
               </div>
 
               <div class="cart-line__qty">
-                {% render 'quantity-input', name: 'updates[]', value: item.quantity, line: forloop.index, id: item.key %}
-                <a href="{{ item.url_to_remove }}" class="cart-line__remove" data-cart-remove="{{ forloop.index }}">Remove</a>
+                {%- if settings.gift_box_product and item.product_id == settings.gift_box_product.id -%}
+                  {%- comment -%} Kept in step with the gift-boxed items by theme.js. {%- endcomment -%}
+                  <input type="hidden" name="updates[]" value="{{ item.quantity }}">
+                  <p class="cart-line__variant">{{ item.quantity }} × one for each gift-boxed piece</p>
+                {%- else -%}
+                  {% render 'quantity-input', name: 'updates[]', value: item.quantity, line: forloop.index, id: item.key %}
+                  <a href="{{ item.url_to_remove }}" class="cart-line__remove" data-cart-remove="{{ forloop.index }}">Remove</a>
+                {%- endif -%}
               </div>
 
               <p class="cart-line__total">{{ item.final_line_price | money }}</p>

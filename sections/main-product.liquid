@@ -133,12 +133,29 @@
           {%- endfor -%}
         {%- endunless -%}
 
+        {%- assign gift_box = settings.gift_box_product -%}
+        {%- if gift_box.available and gift_box.id != product.id -%}
+          <fieldset class="product-option">
+            <legend class="product-option__label">Packaging</legend>
+            <div class="product-option__values">
+              <label class="option-pill">
+                <input type="radio" name="packaging" value="standard" data-packaging checked>
+                <span>Standard</span>
+              </label>
+              <label class="option-pill">
+                <input type="radio" name="packaging" value="gift" data-packaging>
+                <span>Gift box&nbsp;<em class="option-pill__extra">+ {{ gift_box.selected_or_first_available_variant.price | money_without_trailing_zeros }}</em></span>
+              </label>
+            </div>
+          </fieldset>
+        {%- endif -%}
+
         <p class="form-message form-message--error" data-product-error role="alert" hidden></p>
 
         {%- liquid
           assign in_bag = 0
           for item in cart.items
-            if item.variant_id == current_variant.id
+            if item.variant_id == current_variant.id and item.properties.Packaging == blank
               assign in_bag = in_bag | plus: item.quantity
             endif
           endfor

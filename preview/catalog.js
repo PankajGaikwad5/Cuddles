@@ -105,8 +105,23 @@ const products = SPECS.map(([handle, title, price, imgs, category, extra = {}], 
   };
 });
 
+// Stand-in for the ₹200 "Gift box" product the store owner creates in admin (picked in theme settings).
+// Kept out of `products` so it never shows in collections, like the live theme hides it.
+const giftBoxImage = { ...imageFor('K'), alt: 'Gift box' };
+const giftBoxVariant = { id: 9001, title: 'Default Title', options: ['Default Title'], option1: 'Default Title', price: 20000, compare_at_price: null, sku: 'CUD-GIFT', url: '/products/gift-box?variant=9001', available: true };
+const giftBox = {
+  id: 9000, handle: 'gift-box', title: 'Gift box', url: '/products/gift-box', category: 'gift', object_type: 'product',
+  price: 20000, compare_at_price: null, price_varies: false, available: true,
+  featured_image: giftBoxImage, images: [giftBoxImage],
+  media: [{ id: 900000, media_type: 'image', alt: 'Gift box', preview_image: giftBoxImage, src: giftBoxImage.src }],
+  description: '<p>Wrapped in our signature box, ready to give.</p>', content: '',
+  options: ['Title'], variants: [giftBoxVariant], has_only_default_variant: true, created_at: -1,
+};
+giftBox.featured_media = giftBox.media[0];
+const everyProduct = [...products, giftBox];
+
 const findVariant = (id) => {
-  for (const p of products) {
+  for (const p of everyProduct) {
     const v = p.variants.find((x) => String(x.id) === String(id));
     if (v) return { product: p, variant: v };
   }
@@ -228,7 +243,7 @@ const allCollections = () =>
   ['new', 'knitwear', 'loungewear', 'blankets', 'accessories'].map((h) => getCollection(h));
 
 function getProduct(handle, variantId) {
-  const p = products.find((x) => x.handle === handle);
+  const p = everyProduct.find((x) => x.handle === handle);
   if (!p) return null;
   const selected =
     p.variants.find((v) => String(v.id) === String(variantId)) || p.variants.find((v) => v.available) || p.variants[0];

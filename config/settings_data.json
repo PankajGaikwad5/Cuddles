@@ -23,6 +23,7 @@
     "collection_image_fit": "contain",
     "favicon": "shopify://shop_images/cuddles.png",
     "cart_type": "drawer",
+    "gift_box_product": "gift-box",
     "shop_path": "/shop",
     "social_instagram": "https://instagram.com",
     "social_pinterest": "https://pinterest.com",

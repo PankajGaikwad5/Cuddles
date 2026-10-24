@@ -55,6 +55,7 @@
         moneyFormat: {{ shop.money_format | json }},
         cartType: {{ settings.cart_type | json }},
         shopPath: {{ settings.shop_path | json }},
+        giftBoxVariantId: {% if settings.gift_box_product.available %}{{ settings.gift_box_product.selected_or_first_available_variant.id }}{% else %}null{% endif %},
         routes: {
           root: {{ routes.root_url | json }},
           cart: {{ routes.cart_url | json }},

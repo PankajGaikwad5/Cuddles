@@ -181,6 +181,16 @@
             "label": "Page"
           }
         ]
+      },
+      {
+        "type": "header",
+        "content": "Gift box"
+      },
+      {
+        "type": "product",
+        "id": "gift_box_product",
+        "label": "Gift box product",
+        "info": "Create a product called 'Gift box' priced at the gift box fee (e.g. ₹200). Product pages then offer 'Standard' or 'Gift box', and one gift box is added to the bag for each gift-boxed item. Leave empty to hide the option."
       }
     ]
   },

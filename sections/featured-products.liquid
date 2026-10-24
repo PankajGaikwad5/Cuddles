@@ -25,6 +25,7 @@
   <div class="picks__track" data-slider-track>
     {%- if source != blank and source.size > 0 -%}
       {%- for product in source limit: section.settings.limit -%}
+        {%- if product.id == settings.gift_box_product.id %}{% continue %}{% endif -%}
         <div class="picks__item">{% render 'product-card', product: product, loading: 'lazy' %}</div>
       {%- endfor -%}
     {%- else -%}

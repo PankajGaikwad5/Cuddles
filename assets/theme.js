@@ -50,6 +50,28 @@
   }
   const getCart = () => cartRequest(`${routes.cart}.js`);
 
+  /* ---------------- Gift boxes ---------------- */
+  // Gift-boxed items carry "Packaging: Gift box"; the bag holds one gift box (theme setting) per such item.
+  const giftBoxId = theme.giftBoxVariantId ? String(theme.giftBoxVariantId) : null;
+  const isGiftBox = (item) => giftBoxId !== null && String(item.id) === giftBoxId;
+  const isGiftBoxed = (item) => !!(item.properties && item.properties.Packaging === 'Gift box');
+
+  // Brings the gift box quantity in line with the gift-boxed items; returns the up-to-date cart.
+  async function syncGiftBoxes(cart) {
+    if (!giftBoxId) return cart;
+    const needed = cart.items.filter(isGiftBoxed).reduce((s, i) => s + i.quantity, 0);
+    const boxes = cart.items.filter(isGiftBox);
+    const have = boxes.reduce((s, i) => s + i.quantity, 0);
+    if (have === needed && boxes.length <= 1) return cart;
+    if (!boxes.length) {
+      await cartRequest(`${routes.cartAdd}.js`, { items: [{ id: Number(giftBoxId), quantity: needed }] });
+      return getCart();
+    }
+    const updates = {};
+    boxes.forEach((b, i) => { updates[b.key] = i === 0 ? needed : 0; });
+    return cartRequest(`${routes.cartUpdate}.js`, { updates });
+  }
+
   /* ---------------- /shop address ---------------- */
   // Shopify always serves all products at /collections/all. With a URL redirect
   // /shop -> /collections/all in place, show /shop in the address bar instead.
@@ -224,9 +246,12 @@
 
     footer.hidden = false;
     list.innerHTML = cart.items.map((item, i) => {
-      const options = item.product_has_only_default_variant
-        ? ''
-        : (item.options_with_values || []).map((o) => `${escapeHtml(o.name)}: ${escapeHtml(o.value)}`).join(' · ');
+      const options = [
+        ...(item.product_has_only_default_variant ? [] : item.options_with_values || []).map((o) => `${escapeHtml(o.name)}: ${escapeHtml(o.value)}`),
+        ...Object.entries(item.properties || {})
+          .filter(([k, v]) => v && !k.startsWith('_'))
+          .map(([k, v]) => `${escapeHtml(k)}: ${escapeHtml(v)}`),
+      ].join(' · ');
       const compare = item.original_price > item.final_price ? ` <s>${formatMoney(item.original_line_price)}</s>` : '';
       const image = item.image
         ? `<img src="${escapeHtml(resizeImage(item.image, 240))}" alt="${escapeHtml(item.product_title)}" loading="lazy">`
@@ -240,6 +265,8 @@
               <span class="drawer-item__price">${formatMoney(item.final_line_price)}${compare}</span>
             </div>
             ${options ? `<p class="drawer-item__variant">${options}</p>` : ''}
+            ${isGiftBox(item) ? `
+            <p class="drawer-item__variant">One for each gift-boxed piece</p>` : `
             <div class="drawer-item__actions">
               <div class="qty qty--small" data-qty>
                 <button type="button" class="qty__btn" data-qty-step="-1" aria-label="Decrease quantity">&minus;</button>
@@ -247,7 +274,7 @@
                 <button type="button" class="qty__btn" data-qty-step="1" aria-label="Increase quantity">+</button>
               </div>
               <button type="button" class="drawer-item__remove" data-drawer-remove="${i + 1}">Remove</button>
-            </div>
+            </div>`}
           </div>
         </div>`;
     }).join('');
@@ -256,7 +283,7 @@
   async function changeLine(line, quantity, row) {
     if (row) row.classList.add('is-updating');
     try {
-      const cart = await cartRequest(`${routes.cartChange}.js`, { line: Number(line), quantity: Number(quantity) });
+      const cart = await syncGiftBoxes(await cartRequest(`${routes.cartChange}.js`, { line: Number(line), quantity: Number(quantity) }));
       renderDrawer(cart);
       return cart;
     } catch (err) {
@@ -310,6 +337,7 @@
       if (!input) return;
       input.closest('.cart-line').classList.add('is-updating');
       cartRequest(`${routes.cartChange}.js`, { line: Number(input.dataset.line), quantity: Number(input.value) })
+        .then(syncGiftBoxes)
         .then(reload)
         .catch((err) => { alert(err.message); reload(); });
     });
@@ -317,7 +345,7 @@
       const link = e.target.closest('[data-cart-remove]');
       if (!link) return;
       e.preventDefault();
-      cartRequest(`${routes.cartChange}.js`, { line: Number(link.dataset.cartRemove), quantity: 0 }).then(reload).catch(reload);
+      cartRequest(`${routes.cartChange}.js`, { line: Number(link.dataset.cartRemove), quantity: 0 }).then(syncGiftBoxes).then(reload).catch(reload);
     });
     const note = $('[data-cart-note]', cartPage);
     if (note) {
@@ -416,11 +444,16 @@
     const stepper = $('[data-bag-stepper]', form);
     const stepperQty = $('[data-bag-qty]', form);
     const viewLink = $('[data-bag-view]', root);
+    const packaging = $$('[data-packaging]', form);
     let currentAvailable = !addButton.disabled;
     let cart = null;
 
+    const wantsGiftBox = () => packaging.some((r) => r.checked && r.value === 'gift');
+    // A bag line matches when it's the selected variant with the selected packaging.
+    const matches = (i) => String(i.id) === idInput.value && isGiftBoxed(i) === wantsGiftBox();
+
     // Once the selected variant is in the bag, "Add to bag" becomes a − qty + stepper.
-    const inBag = () => (cart ? cart.items.filter((i) => String(i.id) === idInput.value) : []);
+    const inBag = () => (cart ? cart.items.filter(matches) : []);
     const syncStepper = () => {
       const qty = inBag().reduce((s, i) => s + i.quantity, 0);
       const show = qty > 0 && currentAvailable;
@@ -447,13 +480,13 @@
       stepper.addEventListener('click', async (e) => {
         const btn = e.target.closest('[data-bag-step]');
         if (!btn || stepper.classList.contains('is-busy')) return;
-        const line = cart ? cart.items.findIndex((i) => String(i.id) === idInput.value) : -1;
+        const line = cart ? cart.items.findIndex(matches) : -1;
         if (line < 0) return;
         const next = cart.items[line].quantity + Number(btn.dataset.bagStep);
         stepper.classList.add('is-busy');
         if (errorEl) errorEl.hidden = true;
         try {
-          renderDrawer(await cartRequest(`${routes.cartChange}.js`, { line: line + 1, quantity: Math.max(0, next) }));
+          renderDrawer(await syncGiftBoxes(await cartRequest(`${routes.cartChange}.js`, { line: line + 1, quantity: Math.max(0, next) })));
         } catch (err) {
           if (errorEl) {
             errorEl.textContent = err.message;
@@ -517,6 +550,7 @@
     };
 
     radios.forEach((r) => r.addEventListener('change', update));
+    packaging.forEach((r) => r.addEventListener('change', syncStepper));
     if (radios.length) markAvailability(selected());
 
     form.addEventListener('submit', async (e) => {
@@ -527,8 +561,12 @@
       setButton('adding');
       addButton.classList.add('is-loading');
       try {
-        await cartRequest(`${routes.cartAdd}.js`, new FormData(form));
-        renderDrawer(await getCart());
+        if (wantsGiftBox()) {
+          await cartRequest(`${routes.cartAdd}.js`, { items: [{ id: Number(idInput.value), quantity: 1, properties: { Packaging: 'Gift box' } }] });
+        } else {
+          await cartRequest(`${routes.cartAdd}.js`, new FormData(form));
+        }
+        renderDrawer(await syncGiftBoxes(await getCart()));
       } catch (err) {
         if (errorEl) {
           errorEl.textContent = err.message;

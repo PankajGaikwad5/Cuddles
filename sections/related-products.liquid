@@ -11,7 +11,7 @@
     <h2 class="related__heading">{{ section.settings.heading }}</h2>
     <div class="product-grid" style="--grid-cols: 4;">
       {%- for item in source.products -%}
-        {%- if item.id != product.id and shown < section.settings.limit -%}
+        {%- if item.id != product.id and item.id != settings.gift_box_product.id and shown < section.settings.limit -%}
           {% render 'product-card', product: item, loading: 'lazy' %}
           {%- assign shown = shown | plus: 1 -%}
         {%- endif -%}

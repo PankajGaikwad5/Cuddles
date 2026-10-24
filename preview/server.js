@@ -85,9 +85,9 @@ function cartLines() {
         url_to_remove: `/cart/change?line=${i + 1}&quantity=0`,
         image: product.featured_image.src,
         featured_image: { url: product.featured_image.src, alt: product.title },
-        product_has_only_default_variant: false,
+        product_has_only_default_variant: product.has_only_default_variant,
         options_with_values: product.options.map((name, j) => ({ name, value: variant.options[j] })),
-        properties: {},
+        properties: line.properties || {},
         _product: product,
         _variant: variant,
       };
@@ -119,23 +119,24 @@ function cartLiquid() {
     image: { src: l.image, alt: l.product_title },
     product: l._product,
     variant: l._variant,
-    properties: [],
   }));
   const json = cartJSON();
   return { ...json, items: lines, currency: { iso_code: 'INR' }, cart_level_discount_applications: [] };
 }
 
-function addToCart(id, quantity = 1) {
+function addToCart(id, quantity = 1, properties = {}) {
   const found = catalog.findVariant(id);
   if (!found) throw Object.assign(new Error('Product not found'), { status: 404 });
   if (!found.variant.available) {
     throw Object.assign(new Error(`${found.product.title} is sold out.`), { status: 422 });
   }
   const qty = Math.max(1, Number(quantity) || 1);
-  const existing = state.lines.find((l) => String(l.id) === String(id));
-  if (existing) existing.quantity += qty;
-  else state.lines.push({ id: Number(id), quantity: qty });
-  return cartJSON().items.find((i) => String(i.id) === String(id));
+  // Like Shopify: same variant with different line item properties is a separate line.
+  const sameProps = (l) => JSON.stringify(l.properties || {}) === JSON.stringify(properties || {});
+  const index = state.lines.findIndex((l) => String(l.id) === String(id) && sameProps(l));
+  if (index >= 0) state.lines[index].quantity += qty;
+  else state.lines.push({ id: Number(id), quantity: qty, properties: properties || {} });
+  return cartJSON().items[index >= 0 ? index : state.lines.length - 1];
 }
 
 function changeLine({ line, id, quantity }) {
@@ -149,7 +150,8 @@ function changeLine({ line, id, quantity }) {
 
 /* ======================= Globals ======================= */
 function globals() {
-  const settings = readJSON('config/settings_data.json').current;
+  const settings = { ...readJSON('config/settings_data.json').current };
+  if (typeof settings.gift_box_product === 'string') settings.gift_box_product = catalog.getProduct(settings.gift_box_product);
   return {
     shop: {
       name: 'Cuddles',
@@ -349,6 +351,7 @@ liquid.registerFilter('image_tag', (u, ...args) => {
 liquid.registerFilter('video_tag', () => '');
 liquid.registerFilter('placeholder_svg_tag', () => '<svg viewBox="0 0 100 100"></svg>');
 liquid.registerFilter('money', money);
+liquid.registerFilter('money_without_trailing_zeros', (c) => money(c).replace(/\.00$/, ''));
 liquid.registerFilter('money_with_currency', (c) => `${money(c)} INR`);
 liquid.registerFilter('money_without_currency', (c) => (Number(c || 0) / 100).toFixed(2));
 liquid.registerFilter('default_errors', (e) => (e ? `<ul><li>${[].concat(e).join('</li><li>')}</li></ul>` : ''));
@@ -443,7 +446,7 @@ async function handlePost(req, res, url) {
     switch (route) {
       case '/cart/add': {
         let added;
-        if (Array.isArray(body.items)) added = { items: body.items.map((i) => addToCart(i.id, i.quantity)) };
+        if (Array.isArray(body.items)) added = { items: body.items.map((i) => addToCart(i.id, i.quantity, i.properties)) };
         else added = addToCart(body.id, body.quantity);
         return isJs ? json(res, 200, added) : redirect(res, '/cart');
       }
@@ -453,8 +456,14 @@ async function handlePost(req, res, url) {
       case '/cart/update':
       case '/cart': {
         if (body.updates) {
-          const updates = Array.isArray(body.updates) ? body.updates : Object.values(body.updates);
-          updates.map(Number).forEach((q, i) => { if (state.lines[i]) state.lines[i].quantity = q; });
+          if (Array.isArray(body.updates)) {
+            body.updates.map(Number).forEach((q, i) => { if (state.lines[i]) state.lines[i].quantity = q; });
+          } else {
+            // Keyed by line item key ("variantId:index") or variant id, as Shopify accepts.
+            Object.entries(body.updates).forEach(([k, q]) => {
+              state.lines.forEach((l, i) => { if (`${l.id}:${i}` === k || String(l.id) === k) l.quantity = Number(q); });
+            });
+          }
           state.lines = state.lines.filter((l) => l.quantity > 0);
         }
         if (typeof body.note === 'string') state.note = body.note;
