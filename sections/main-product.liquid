@@ -170,6 +170,11 @@
         </script>
       {%- endform -%}
 
+      <button type="button" class="product-share" data-copy-link="{{ product.url }}">
+        {%- render 'icon', name: 'link' -%}
+        <span data-copy-label aria-live="polite">Copy link</span>
+      </button>
+
       {%- if product.description != blank -%}
         <div class="product__description rte">{{ product.description }}</div>
       {%- endif -%}

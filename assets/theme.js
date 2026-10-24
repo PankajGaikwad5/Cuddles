@@ -541,6 +541,46 @@
     });
   });
 
+  /* ---------------- Copy product link ---------------- */
+  $$('[data-copy-link]').forEach((btn) => {
+    const label = $('[data-copy-label]', btn);
+    const original = label.textContent;
+    let timer;
+
+    const copy = async (text) => {
+      if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+      // Fallback for older browsers / non-https preview.
+      const input = document.createElement('textarea');
+      input.value = text;
+      input.setAttribute('readonly', '');
+      input.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(input);
+      input.select();
+      const ok = document.execCommand('copy');
+      input.remove();
+      if (!ok) throw new Error('Copy failed');
+    };
+
+    btn.addEventListener('click', async () => {
+      // Share the clean product URL plus the selected variant, without preview/tracking params.
+      const url = new URL(btn.dataset.copyLink, window.location.origin);
+      const variant = new URLSearchParams(window.location.search).get('variant');
+      if (variant) url.searchParams.set('variant', variant);
+      try {
+        await copy(url.toString());
+        label.textContent = 'Link copied';
+        btn.classList.add('is-copied');
+      } catch (err) {
+        label.textContent = "Couldn't copy";
+      }
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        label.textContent = original;
+        btn.classList.remove('is-copied');
+      }, 2000);
+    });
+  });
+
   /* ---------------- Collection filters & sorting ---------------- */
   $$('[data-filter-form]').forEach((form) => {
     const drawer = makeDrawer($('[data-filter-drawer]', form));
