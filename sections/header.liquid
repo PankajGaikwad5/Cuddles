@@ -66,7 +66,16 @@
       <div class="site-header__utils">
         <a href="{{ routes.cart_url }}" class="nav-link nav-link--util cart-link" aria-label="Bag" data-cart-open>
           {% render 'icon', name: 'bag' %}
-          <span class="cart-link__count" data-cart-count {% if cart.item_count == 0 %}hidden{% endif %}>{{ cart.item_count }}</span>
+          {%- liquid
+            # Gift boxes ride along with gift-boxed items, so they don't add to the count.
+            assign bag_count = cart.item_count
+            for item in cart.items
+              if settings.gift_box_product and item.product_id == settings.gift_box_product.id
+                assign bag_count = bag_count | minus: item.quantity
+              endif
+            endfor
+          -%}
+          <span class="cart-link__count" data-cart-count {% if bag_count == 0 %}hidden{% endif %}>{{ bag_count }}</span>
         </a>
       </div>
     </div>

@@ -16,7 +16,22 @@
             <span>Product</span><span>Quantity</span><span>Total</span>
           </div>
 
+          {%- assign gift_box = settings.gift_box_product -%}
           {%- for item in cart.items -%}
+            {%- if gift_box and item.product_id == gift_box.id -%}
+              {%- comment -%} Shown on its gift-boxed items instead; theme.js keeps its quantity in step. {%- endcomment -%}
+              <input type="hidden" name="updates[]" value="{{ item.quantity }}">
+              {%- continue -%}
+            {%- endif -%}
+            {%- liquid
+              assign gift_boxed = false
+              assign line_total = item.final_line_price
+              if gift_box and item.properties.Packaging == 'Gift box'
+                assign gift_boxed = true
+                assign gift_box_price = gift_box.selected_or_first_available_variant.price
+                assign line_total = gift_box_price | times: item.quantity | plus: line_total
+              endif
+            -%}
             <div class="cart-line" data-line="{{ forloop.index }}">
               <a href="{{ item.url }}" class="cart-line__media">
                 {%- if item.image -%}
@@ -36,9 +51,14 @@
                 {%- for property in item.properties -%}
                   {%- assign first_char = property.first | slice: 0 -%}
                   {%- if property.last != blank and first_char != '_' -%}
-                    <p class="cart-line__variant">{{ property.first }}: {{ property.last }}</p>
+                    {%- unless gift_boxed and property.first == 'Packaging' -%}
+                      <p class="cart-line__variant">{{ property.first }}: {{ property.last }}</p>
+                    {%- endunless -%}
                   {%- endif -%}
                 {%- endfor -%}
+                {%- if gift_boxed -%}
+                  <p class="cart-line__gift">+ Gift box {{ gift_box_price | money_without_trailing_zeros }}{% if item.quantity > 1 %} × {{ item.quantity }}{% endif %}</p>
+                {%- endif -%}
                 <p class="cart-line__price">
                   {{ item.final_price | money }}
                   {%- if item.original_price > item.final_price -%}<s>{{ item.original_price | money }}</s>{%- endif -%}
@@ -46,17 +66,11 @@
               </div>
 
               <div class="cart-line__qty">
-                {%- if settings.gift_box_product and item.product_id == settings.gift_box_product.id -%}
-                  {%- comment -%} Kept in step with the gift-boxed items by theme.js. {%- endcomment -%}
-                  <input type="hidden" name="updates[]" value="{{ item.quantity }}">
-                  <p class="cart-line__variant">{{ item.quantity }} × one for each gift-boxed piece</p>
-                {%- else -%}
-                  {% render 'quantity-input', name: 'updates[]', value: item.quantity, line: forloop.index, id: item.key %}
-                  <a href="{{ item.url_to_remove }}" class="cart-line__remove" data-cart-remove="{{ forloop.index }}">Remove</a>
-                {%- endif -%}
+                {% render 'quantity-input', name: 'updates[]', value: item.quantity, line: forloop.index, id: item.key %}
+                <a href="{{ item.url_to_remove }}" class="cart-line__remove" data-cart-remove="{{ forloop.index }}">Remove</a>
               </div>
 
-              <p class="cart-line__total">{{ item.final_line_price | money }}</p>
+              <p class="cart-line__total">{{ line_total | money }}</p>
             </div>
           {%- endfor -%}
         </div>

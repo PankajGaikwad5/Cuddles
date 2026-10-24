@@ -174,7 +174,11 @@
         <a href="{{ routes.cart_url }}" class="product-form__view" data-cart-open data-bag-view {% if in_bag == 0 %}hidden{% endif %}>View bag</a>
 
         {%- if section.settings.show_dynamic_checkout -%}
-          <div class="product-form__dynamic">{{ form | payment_button }}</div>
+          <div class="product-form__dynamic" data-dynamic-checkout>{{ form | payment_button }}</div>
+          {%- if gift_box.available and gift_box.id != product.id -%}
+            {%- comment -%} Shopify's Buy it now can't take the gift box along, so this one stands in when Gift box is chosen. {%- endcomment -%}
+            <button type="button" class="product-form__gift-buy" data-gift-buy hidden>Buy it now</button>
+          {%- endif -%}
         {%- endif -%}
 
         <script type="application/json" data-variants>

@@ -130,6 +130,7 @@ body main:has(> :first-child .hero), body main:has(> .hero:first-child) { paddin
 .option-pill input:checked + span { background: var(--color-text); border-color: var(--color-text); color: var(--color-bg); }
 .option-pill input:focus-visible + span { outline: 1px solid var(--color-text); outline-offset: 3px; }
 .option-pill__extra { font-style: normal; opacity: .7; }
+.drawer-item__gift, .cart-line__gift { margin: 4px 0 0; font-size: 11px; letter-spacing: .08em; opacity: .7; }
 .option-pill input:checked + span .option-pill__extra { opacity: .85; }
 .option-pill.is-unavailable > span { opacity: .45; text-decoration: line-through; }
 
@@ -170,7 +171,12 @@ body main:has(> :first-child .hero), body main:has(> .hero:first-child) { paddin
 /* Buttons match the homepage hero pill: thin outline, small regular caps, soft hover tint. */
 .product-form__buy { gap: 8px; }
 .product-form__buy .qty { height: 42px; border-color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.product-form__gift-buy { display: block; width: 100%; margin-top: 10px; }
+.product-form__gift-buy[hidden] { display: none; }
+.product-form__gift-buy:hover:not(:disabled) { background: color-mix(in srgb, var(--color-text) 8%, transparent); transform: translateY(-1px); }
+.product-form__gift-buy:disabled { opacity: .5; cursor: default; }
 .product-form__buy .button-solid,
+.product-form__gift-buy,
 .product .product-form__dynamic .shopify-payment-button__button--unbranded {
   height: 42px; padding: 0 22px; border: 1px solid var(--color-text); border-radius: 999px;
   background: transparent; color: var(--color-text);

@@ -227,7 +227,10 @@
   }
 
   function renderDrawer(cart) {
-    updateCount(cart.item_count);
+    // Gift boxes ride along with their items: not counted, and shown on the gift-boxed item instead.
+    const boxes = cart.items.filter(isGiftBox);
+    const boxPrice = boxes.length ? boxes[0].final_price : Number(theme.giftBoxPrice) || 0;
+    updateCount(cart.item_count - boxes.reduce((s, i) => s + i.quantity, 0));
     document.dispatchEvent(new CustomEvent('cart:updated', { detail: cart }));
     if (!cartDrawer) return;
     const list = $('[data-cart-items]', cartDrawer.el);
@@ -246,13 +249,16 @@
 
     footer.hidden = false;
     list.innerHTML = cart.items.map((item, i) => {
+      if (isGiftBox(item)) return '';
+      const giftBoxed = isGiftBoxed(item);
+      const extra = giftBoxed ? boxPrice * item.quantity : 0;
       const options = [
         ...(item.product_has_only_default_variant ? [] : item.options_with_values || []).map((o) => `${escapeHtml(o.name)}: ${escapeHtml(o.value)}`),
         ...Object.entries(item.properties || {})
-          .filter(([k, v]) => v && !k.startsWith('_'))
+          .filter(([k, v]) => v && !k.startsWith('_') && !(giftBoxed && k === 'Packaging'))
           .map(([k, v]) => `${escapeHtml(k)}: ${escapeHtml(v)}`),
       ].join(' · ');
-      const compare = item.original_price > item.final_price ? ` <s>${formatMoney(item.original_line_price)}</s>` : '';
+      const compare = item.original_price > item.final_price ? ` <s>${formatMoney(item.original_line_price + extra)}</s>` : '';
       const image = item.image
         ? `<img src="${escapeHtml(resizeImage(item.image, 240))}" alt="${escapeHtml(item.product_title)}" loading="lazy">`
         : '';
@@ -262,11 +268,10 @@
           <div>
             <div class="drawer-item__top">
               <a href="${escapeHtml(item.url)}" class="drawer-item__title">${escapeHtml(item.product_title)}</a>
-              <span class="drawer-item__price">${formatMoney(item.final_line_price)}${compare}</span>
+              <span class="drawer-item__price">${formatMoney(item.final_line_price + extra)}${compare}</span>
             </div>
             ${options ? `<p class="drawer-item__variant">${options}</p>` : ''}
-            ${isGiftBox(item) ? `
-            <p class="drawer-item__variant">One for each gift-boxed piece</p>` : `
+            ${giftBoxed ? `<p class="drawer-item__gift">+ Gift box ${formatMoney(boxPrice).replace(/\.00$/, '')}${item.quantity > 1 ? ` × ${item.quantity}` : ''}</p>` : ''}
             <div class="drawer-item__actions">
               <div class="qty qty--small" data-qty>
                 <button type="button" class="qty__btn" data-qty-step="-1" aria-label="Decrease quantity">&minus;</button>
@@ -274,7 +279,7 @@
                 <button type="button" class="qty__btn" data-qty-step="1" aria-label="Increase quantity">+</button>
               </div>
               <button type="button" class="drawer-item__remove" data-drawer-remove="${i + 1}">Remove</button>
-            </div>`}
+            </div>
           </div>
         </div>`;
     }).join('');
@@ -550,7 +555,34 @@
     };
 
     radios.forEach((r) => r.addEventListener('change', update));
-    packaging.forEach((r) => r.addEventListener('change', syncStepper));
+
+    // With Gift box chosen, swap Shopify's Buy it now for one that brings the gift box to checkout.
+    const dynamicCheckout = $('[data-dynamic-checkout]', form);
+    const giftBuy = $('[data-gift-buy]', form);
+    const syncBuyNow = () => {
+      if (!giftBuy) return;
+      giftBuy.hidden = !wantsGiftBox();
+      giftBuy.disabled = !currentAvailable;
+      if (dynamicCheckout) dynamicCheckout.hidden = wantsGiftBox();
+    };
+    packaging.forEach((r) => r.addEventListener('change', () => {
+      syncStepper();
+      syncBuyNow();
+    }));
+    radios.forEach((r) => r.addEventListener('change', syncBuyNow));
+    syncBuyNow();
+
+    if (giftBuy) {
+      // A cart permalink opens a fresh checkout with just this item + its gift box, leaving the bag untouched
+      // (like Shopify's Buy it now). Properties go on the first item as Base64 URL-encoded JSON.
+      giftBuy.addEventListener('click', () => {
+        if (!currentAvailable) return;
+        const props = btoa(JSON.stringify({ Packaging: 'Gift box' })).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+        giftBuy.disabled = true;
+        giftBuy.classList.add('is-loading');
+        window.location.href = `${routes.cart}/${idInput.value}:1,${giftBoxId}:1?properties=${props}`;
+      });
+    }
     if (radios.length) markAvailability(selected());
 
     form.addEventListener('submit', async (e) => {

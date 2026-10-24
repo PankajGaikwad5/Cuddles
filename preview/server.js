@@ -559,6 +559,25 @@ function routePage(url, query) {
     if (policy) return ctx('page', { page: { title: policy.title, content: policy.body }, page_title: policy.title });
   }
   if (url === '/password') return ctx('password');
+  // Cart permalink (/cart/ID:QTY,ID:QTY): on Shopify, a fresh checkout with only these items; the bag is untouched.
+  if ((m = url.match(/^\/cart\/(\d+:\d+(?:,\d+:\d+)*)$/))) {
+    let props = {};
+    try { props = JSON.parse(Buffer.from(query.get('properties') || '', 'base64url').toString() || '{}'); } catch {}
+    const lines = m[1].split(',').map((pair, i) => {
+      const [id, qty] = pair.split(':');
+      const found = catalog.findVariant(id);
+      if (!found) return '';
+      const extra = i === 0 ? Object.entries(props).map(([k, v]) => ` (${k}: ${v})`).join('') : '';
+      return `<li>${found.product.title} × ${qty}${extra} — ${money(found.variant.price * qty)}</li>`;
+    }).join('');
+    return ctx('page', {
+      page_title: 'Checkout',
+      page: {
+        title: 'Checkout',
+        content: `<p>On your live store this opens Shopify's checkout with only these items (your bag stays as it is):</p><ul>${lines}</ul><p><a href="/cart">Back to bag</a></p>`,
+      },
+    });
+  }
   if (url === '/checkout') {
     return ctx('page', {
       page_title: 'Checkout',
