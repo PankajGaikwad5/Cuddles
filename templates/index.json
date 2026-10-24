@@ -116,7 +116,7 @@
         "col-4": {
           "type": "collection",
           "settings": {
-            "collection": "swaddles",
+            "collection": "sleeping-essentials",
             "image_url": "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=1000&q=80",
             "title": ""
           }
