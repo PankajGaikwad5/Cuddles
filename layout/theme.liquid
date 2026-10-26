@@ -36,7 +36,11 @@
           assign seo_title = settings.seo_all_title | default: page_title
         endif
         if seo_description == blank
-          assign seo_description = settings.seo_collection_description | replace: '[collection]', collection.title
+          assign collection_label = collection.title
+          if collection.handle == 'all'
+            assign collection_label = 'baby clothes and essentials'
+          endif
+          assign seo_description = settings.seo_collection_description | replace: '[collection]', collection_label
         endif
       endif
       if seo_description == blank
