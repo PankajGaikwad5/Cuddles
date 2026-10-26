@@ -3,7 +3,8 @@
   - The "Shop" address (Theme settings > Shop page, e.g. /shop) goes straight to all
     products; theme.js then shows /shop in the address bar. No URL redirect needed.
   - /pages/about falls back to the theme's built-in About page (/?view=about) until an
-    "About" page exists in Online Store > Pages.
+    "About" page exists in Online Store > Pages. Likewise /pages/sitemap falls back to
+    /sitemap.xml and /pages/llms to Shopify's /llms.txt.
   Usage: {%- capture href -%}{% render 'link-href', url: url %}{%- endcapture -%}
 {%- endcomment -%}
 {%- liquid
@@ -12,8 +13,15 @@
     assign href = routes.all_products_collection_url
   elsif href contains '/pages/'
     assign page_handle = href | split: '/pages/' | last | split: '?' | first | split: '#' | first
-    if page_handle == 'about' and pages[page_handle].url == blank
-      assign href = routes.root_url | append: '?view=about'
+    if pages[page_handle].url == blank
+      case page_handle
+        when 'about'
+          assign href = routes.root_url | append: '?view=about'
+        when 'sitemap'
+          assign href = '/sitemap.xml'
+        when 'llms'
+          assign href = '/llms.txt'
+      endcase
     endif
   endif
   echo href

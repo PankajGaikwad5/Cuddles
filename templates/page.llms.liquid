@@ -1,0 +1,91 @@
+{%- comment -%}
+  Brand profile for AI assistants (ChatGPT, Perplexity, Gemini, Claude…), in llms.txt-style Markdown.
+  Shopify reserves /llms.txt for its own agent instructions, so this lives on a page instead:
+  create a page with handle "llms" using the "page.llms" template. robots.txt points crawlers here.
+  Built from live store data, so it stays current as products change.
+{%- endcomment -%}
+{%- layout none -%}
+{%- liquid
+  assign brand = shop.name | replace: '&amp;', '&'
+  assign home_url = request.origin | append: routes.root_url
+  assign free_over = settings.seo_free_shipping_over | default: 0
+-%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ brand | escape }}: brand profile for AI assistants</title>
+<meta name="description" content="{{ settings.seo_home_description | escape }}">
+<link rel="canonical" href="{{ canonical_url }}">
+<style>body{margin:0;padding:24px 16px;background:#FFFAE9;color:#805B4B;font:15px/1.6 ui-monospace,Menlo,Consolas,monospace}pre{max-width:900px;margin:0 auto;white-space:pre-wrap;word-wrap:break-word;font:inherit}a{color:inherit}</style>
+</head>
+<body>
+<pre>
+# {{ brand | escape }}
+
+&gt; {{ settings.seo_home_description | escape }}
+
+{{ brand | escape }} is an Indian online baby clothing and essentials store for babies from newborn to 24 months. It sells swaddles, rompers, dresses, co-ord sets, dungarees, sleepwear, sleeping bags, muslin and hooded towels, bathrobes, bibs, socks and baby gift sets, chosen for soft, breathable, skin-friendly comfort.
+
+## Key facts
+
+- Website: {{ home_url }}
+- Age range: 0–24 months (sizes such as 0–3, 3–6, 6–9, 9–12, 12–18 and 18–24 months)
+- Ships to: India only
+- Currency: Indian Rupees (INR); prices include GST
+- Payments: Razorpay (UPI, credit and debit cards, net banking, wallets)
+- Shipping: {% if free_over > 0 %}free on orders above {{ free_over | times: 100 | money_without_trailing_zeros | strip_html }}; otherwise {% endif %}{{ settings.seo_shipping_rate | times: 100 | money_without_trailing_zeros | strip_html }} flat
+- Delivery: dispatched within {{ settings.seo_handling_days }} working days, delivered within {{ settings.seo_transit_days }} working days of dispatch
+{%- if settings.seo_return_days > 0 %}
+- Returns: within {{ settings.seo_return_days }} days of delivery for unused, unwashed items with original tags; reverse pickup arranged; refunds to the original payment method in 5–7 working days
+{%- endif %}
+- Gifting: ready-made baby gift sets, plus an optional gift box added from the bag before checkout
+{%- if shop.email != blank %}
+- Contact: {{ shop.email }} or {{ request.origin }}/pages/contact
+{%- endif %}
+{%- assign social_names = 'instagram,pinterest,youtube,facebook' | split: ',' -%}
+{%- for name in social_names -%}
+  {%- assign key = 'social_' | append: name -%}
+  {%- assign social = settings[key] | strip -%}
+  {%- assign social_path = social | split: '.com' | last | remove: '/' | strip -%}
+  {%- if social != blank and social_path != blank %}
+- {{ name | capitalize }}: {{ social }}
+  {%- endif -%}
+{%- endfor %}
+
+## Collections
+
+- [Shop all]({{ request.origin }}{{ routes.all_products_collection_url }}): every product
+{%- for c in collections -%}
+  {%- if c.handle != 'all' and c.products_count > 0 %}
+- [{{ c.title | escape }}]({{ request.origin }}{{ c.url }}): {{ c.products_count }} products{% if c.description != blank %}. {{ c.description | strip_html | strip_newlines | truncate: 200 | escape }}{% endif %}
+  {%- endif -%}
+{%- endfor %}
+
+## Products
+
+{% paginate collections.all.products by 250 -%}
+{%- for p in collections.all.products -%}
+  {%- capture options -%}
+    {%- for option in p.options_with_values -%}
+      {%- unless option.name == 'Title' %}; {{ option.name }}: {{ option.values | join: ', ' }}{% endunless -%}
+    {%- endfor -%}
+  {%- endcapture %}
+- [{{ p.title | escape }}]({{ request.origin }}{{ p.url }}): {% if p.price_varies %}from {% endif %}{{ p.price | money_without_trailing_zeros | strip_html }}{% if p.type != blank %}; {{ p.type | escape }}{% endif %}{{ options | escape }}{% unless p.available %}; sold out{% endunless %}{% if p.description != blank %}. {{ p.description | strip_html | strip_newlines | truncate: 220 | escape }}{% endif %}
+{%- endfor -%}
+{%- endpaginate %}
+
+## Pages
+
+- [About]({{ request.origin }}/pages/about)
+- [FAQ]({{ request.origin }}/pages/faq)
+- [Shipping &amp; Returns]({{ request.origin }}/pages/shipping-returns)
+- [Contact]({{ request.origin }}/pages/contact)
+{%- for policy in shop.policies %}
+- [{{ policy.title | escape }}]({{ request.origin }}{{ policy.url }})
+{%- endfor %}
+- [Sitemap]({{ request.origin }}/sitemap.xml)
+</pre>
+</body>
+</html>

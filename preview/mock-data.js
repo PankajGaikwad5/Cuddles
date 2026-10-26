@@ -11,6 +11,8 @@ const PAGES = {
   contact: { title: 'Get in Touch', content: '<p>Questions about an order, sizing or care? Send us a note and we\'ll reply within two working days.</p>' },
   faq: { title: 'FAQ', content: '' },
   'shipping-returns': { title: 'Shipping & Returns', content: '' },
+  sitemap: { title: 'Sitemap', content: '' },
+  llms: { title: 'Brand profile', content: '' },
 };
 const getPage = (handle) => {
   const p = PAGES[handle] || { title: handle.replace(/-/g, ' '), content: lorem };

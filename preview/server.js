@@ -193,7 +193,7 @@ function globals() {
     },
     cart: cartLiquid(),
     customer: state.loggedIn ? mock.customer : null,
-    collections: catalog.allCollections(),
+    collections: Object.assign(catalog.allCollections(), Object.fromEntries(['all', ...catalog.allCollections().map((c) => c.handle)].map((h) => [h, catalog.getCollection(h)]))),
     all_country_option_tags: mock.ALL_COUNTRY_OPTION_TAGS,
     additional_checkout_buttons: false,
     // Same menus a brand-new Shopify store starts with, so the preview matches a fresh import.
@@ -382,6 +382,11 @@ for (const dir of ['layout', 'sections', 'snippets', 'templates', 'assets', 'con
 
 /* ======================= Rendering ======================= */
 async function renderTemplate(name) {
+  // Liquid templates (e.g. page.llms with {% layout none %}) render on their own, like Shopify.
+  if (fs.existsSync(path.join(ROOT, 'templates', `${name}.liquid`))) {
+    const g = globals();
+    return liquid.parseAndRender(read(`templates/${name}.liquid`), g, { globals: g });
+  }
   const tpl = readJSON(`templates/${name}.json`);
   const sections = await Promise.all(tpl.order.map((id) => renderSection(tpl.sections[id].type, tpl.sections[id], id)));
   const layout = tpl.layout || 'theme';
@@ -492,7 +497,7 @@ async function handlePost(req, res, url) {
 // Pages that exist in the store. A fresh store has Contact; FAQ and Shipping & Returns are the
 // ones the setup notes ask you to create. There is deliberately no About page, to exercise the
 // theme's built-in fallback.
-const STORE_PAGES = ['contact', 'faq', 'shipping-returns'];
+const STORE_PAGES = ['contact', 'faq', 'shipping-returns', 'sitemap', 'llms'];
 function routePage(url, query) {
   const ctx = (name, extra = {}) => ({ name, ctx: { template: { name: name.split('/').pop().split('.')[0], suffix: name.split('.')[1] || null, directory: name.includes('/') ? name.split('/')[0] : null }, request: { locale: { iso_code: 'en' }, origin: ORIGIN, page_type: name.split('/').pop().split('.')[0] }, canonical_url: ORIGIN + url, ...extra } });
   let m;
@@ -525,7 +530,7 @@ function routePage(url, query) {
   }
   if ((m = url.match(/^\/pages\/([^/]+)/)) && STORE_PAGES.includes(m[1])) {
     const page = mock.getPage(m[1]);
-    const special = { contact: 'page.contact', faq: 'page.faq', 'shipping-returns': 'page.shipping-returns' }[m[1]];
+    const special = { contact: 'page.contact', faq: 'page.faq', 'shipping-returns': 'page.shipping-returns', sitemap: 'page.sitemap', llms: 'page.llms' }[m[1]];
     return ctx(special || 'page', { page, page_title: page.title });
   }
   // A fresh store's default blog exists but has no posts.

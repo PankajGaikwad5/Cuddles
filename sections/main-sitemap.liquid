@@ -1,0 +1,78 @@
+{%- comment -%}
+  HTML sitemap: every collection, product, page, blog post and policy in one crawlable list.
+  Shopify's own XML sitemap lives at /sitemap.xml; this is the human-readable version.
+  Pages can't be looped in Liquid, so they come from the "Pages" setting.
+{%- endcomment -%}
+<section class="simple-page sitemap">
+  <header class="page-head">
+    <h1 class="page-head__title">{{ section.settings.heading | default: page.title }}</h1>
+  </header>
+
+  <div class="sitemap__grid">
+    <div class="sitemap__col">
+      <h2 class="sitemap__heading">Collections</h2>
+      <ul class="sitemap__list">
+        <li><a href="{{ routes.all_products_collection_url }}">Shop all</a></li>
+        {%- for c in collections -%}
+          {%- if c.handle != 'all' and c.products_count > 0 -%}
+            <li><a href="{{ c.url }}">{{ c.title }}</a></li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+
+      <h2 class="sitemap__heading">Pages</h2>
+      <ul class="sitemap__list">
+        {%- assign lines = section.settings.pages | newline_to_br | split: '<br />' -%}
+        {%- for line in lines -%}
+          {%- assign parts = line | split: '|' -%}
+          {%- assign label = parts.first | strip -%}
+          {%- assign href = parts.last | strip -%}
+          {%- if label != blank and parts.size > 1 -%}
+            {%- capture resolved -%}{% render 'link-href', url: href %}{%- endcapture -%}
+            <li><a href="{{ resolved }}">{{ label }}</a></li>
+          {%- endif -%}
+        {%- endfor -%}
+        {%- for policy in shop.policies -%}
+          <li><a href="{{ policy.url }}">{{ policy.title }}</a></li>
+        {%- endfor -%}
+      </ul>
+
+      {%- assign blog = blogs[section.settings.blog] -%}
+      {%- if blog.articles_count > 0 -%}
+        <h2 class="sitemap__heading">{{ blog.title }}</h2>
+        <ul class="sitemap__list">
+          {%- for article in blog.articles limit: 50 -%}
+            <li><a href="{{ article.url }}">{{ article.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    <div class="sitemap__col sitemap__col--wide">
+      <h2 class="sitemap__heading">Products</h2>
+      {%- paginate collections.all.products by 250 -%}
+        <ul class="sitemap__list sitemap__list--columns">
+          {%- for p in collections.all.products -%}
+            <li><a href="{{ p.url }}">{{ p.title }}</a></li>
+          {%- endfor -%}
+        </ul>
+        {%- if paginate.pages > 1 -%}{% render 'pagination', paginate: paginate %}{%- endif -%}
+      {%- endpaginate -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Sitemap",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Sitemap" },
+    {
+      "type": "textarea", "id": "pages", "label": "Pages",
+      "info": "One per line: Label | /pages/handle",
+      "default": "About | /pages/about\nOur World | /pages/our-world\nFAQ | /pages/faq\nShipping & Returns | /pages/shipping-returns\nContact | /pages/contact\nBrand profile for AI assistants | /pages/llms"
+    },
+    { "type": "text", "id": "blog", "label": "Blog handle", "default": "news" }
+  ]
+}
+{% endschema %}

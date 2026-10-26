@@ -152,12 +152,44 @@
         "link_label": "Shop Mia's Picks",
         "link": ""
       }
+    },
+    "intro": {
+      "type": "rich-text",
+      "settings": {
+        "eyebrow": "About Cuddles",
+        "heading": "Soft baby clothes and everyday essentials, made for 0–24 months",
+        "text": "<p>Cuddles by Mia &amp; Co. is an Indian baby clothing brand for little ones from newborn to 24 months. We bring together swaddles, rompers, dresses, co-ord sets, dungarees, sleepwear, sleeping bags, muslin towels, hooded towels, bibs, socks and gift sets, all chosen for comfort first: soft, breathable fabrics that are gentle on delicate skin.</p><p>Shop online with prices in Indian Rupees, secure payments through Razorpay and delivery across India.</p>",
+        "button_label": "Shop all",
+        "button_link": "/collections/all",
+        "align": "center"
+      }
+    },
+    "faq": {
+      "type": "collapsible-content",
+      "blocks": {
+        "q1": { "type": "row", "settings": { "heading": "What ages are Cuddles clothes made for?", "content": "<p>Our clothing and essentials are made for babies aged 0–24 months. Each product page lists the sizes available, such as 0–3, 3–6, 6–9, 9–12, 12–18 and 18–24 months.</p>" } },
+        "q2": { "type": "row", "settings": { "heading": "Do you deliver across India?", "content": "<p>Yes. We deliver across India. Orders are dispatched within 1–2 working days and usually arrive in 3–7 working days, depending on your pin code.</p>" } },
+        "q3": { "type": "row", "settings": { "heading": "How much does shipping cost?", "content": "<p>Shipping is free on orders above ₹2,999. A flat ₹99 applies to smaller orders.</p>" } },
+        "q4": { "type": "row", "settings": { "heading": "What is your return policy?", "content": "<p>Unused, unwashed items with their original tags can be returned within 7 days of delivery. We arrange a reverse pickup from your address and refund your original payment method within 5–7 working days.</p>" } },
+        "q5": { "type": "row", "settings": { "heading": "Do you offer baby gift sets and gift wrapping?", "content": "<p>Yes. We have ready-made baby gift sets for baby showers, newborn gifts and birthdays, and you can add a gift box to your order from your bag before checkout.</p>" } },
+        "q6": { "type": "row", "settings": { "heading": "Which payment methods do you accept?", "content": "<p>Payments are processed securely through Razorpay. You can pay with UPI, credit and debit cards, net banking and popular wallets.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"],
+      "settings": {
+        "eyebrow": "Good to know",
+        "heading": "Frequently asked questions",
+        "layout": "split",
+        "open_first": false,
+        "schema_faq": true
+      }
     }
   },
   "order": [
     "hero",
     "stories",
     "collections",
-    "picks"
+    "picks",
+    "intro",
+    "faq"
   ]
 }

@@ -1,8 +1,17 @@
+{%- comment -%}
+  Social share tags + JSON-LD structured data.
+  Accepts: seo_title, seo_description (worked out in layout/theme.liquid)
+
+  Careful: Shopify's Liquid parser ends a {{ output }} at the first closing brace, so never
+  put a brace inside a string in an output tag. Build such strings with assign instead.
+  Shopify rejects the whole file on sync otherwise, while local tools accept it.
+{%- endcomment -%}
 {%- liquid
-  assign og_title = page_title | default: shop.name
+  assign brand = shop.name | replace: '&amp;', '&'
+  assign og_title = seo_title | default: page_title | default: brand
   assign og_url = canonical_url | default: request.origin
   assign og_type = 'website'
-  assign og_description = page_description | default: shop.description | default: shop.name
+  assign og_description = seo_description | default: page_description | default: brand
   if request.page_type == 'product'
     assign og_type = 'product'
   elsif request.page_type == 'article'
@@ -11,7 +20,7 @@
   # Pages without their own image (home, contact, etc.) fall back to the theme's share image.
   assign og_image = page_image | default: settings.share_image
 -%}
-<meta property="og:site_name" content="{{ shop.name | escape }}">
+<meta property="og:site_name" content="{{ brand | escape }}">
 <meta property="og:url" content="{{ og_url }}">
 <meta property="og:title" content="{{ og_title | escape }}">
 <meta property="og:type" content="{{ og_type }}">
@@ -39,48 +48,95 @@
 {%- endif -%}
 
 {%- comment -%}
-  JSON-LD for search engines (no visible output). Organization + WebSite on the homepage,
-  Product + BreadcrumbList on products, BreadcrumbList on collections, Article on blog posts.
+  JSON-LD for search engines and AI assistants (no visible output).
+  Every page: OnlineStore (with returns policy) + WebSite.
+  Products: Product with offers, shipping and returns + BreadcrumbList.
+  Collections: CollectionPage with an ItemList of products + BreadcrumbList.
+  Blog posts: BlogPosting. Pages: WebPage (AboutPage / ContactPage where it fits).
 {%- endcomment -%}
 {%- liquid
   assign home_url = request.origin | append: routes.root_url
+  assign org_id = home_url | append: '#organization'
+  assign currency = cart.currency.iso_code
   assign logo_url = ''
   if settings.favicon != blank
     assign logo_url = settings.favicon | image_url: width: 512 | prepend: 'https:'
   elsif settings.share_image != blank
     assign logo_url = settings.share_image | image_url: width: 1200 | prepend: 'https:'
   endif
+
+  # Only real profile links (skip bare https://instagram.com placeholders), always with https://.
   assign same_as = ''
   assign social_names = 'instagram,pinterest,youtube,facebook' | split: ','
   for name in social_names
     assign key = 'social_' | append: name
-    if settings[key] != blank
-      assign same_as = same_as | append: settings[key] | append: '|'
+    assign social = settings[key] | strip
+    if social == blank
+      continue
+    endif
+    unless social contains 'http'
+      assign social = 'https://' | append: social
+    endunless
+    assign social_path = social | split: '.com' | last | remove: '/' | strip
+    if social_path != blank
+      assign same_as = same_as | append: social | append: '|'
     endif
   endfor
   assign same_as = same_as | split: '|'
+
+  assign search_target = request.origin | append: routes.search_url | append: '?q=' | append: '{search_term_string}'
+
+  assign return_days = settings.seo_return_days | default: 0
+  assign returns_url = request.origin | append: '/pages/shipping-returns'
 -%}
+
+{%- capture return_policy -%}
+  {
+    "@type": "MerchantReturnPolicy",
+    "applicableCountry": "IN",
+    {%- if return_days > 0 -%}
+      "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+      "merchantReturnDays": {{ return_days }},
+      "returnMethod": "https://schema.org/ReturnByMail",
+      "itemCondition": "https://schema.org/NewCondition",
+    {%- else -%}
+      "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted",
+    {%- endif -%}
+    "merchantReturnLink": {{ returns_url | json }}
+  }
+{%- endcapture -%}
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    "@id": {{ org_id | json }},
+    "name": {{ brand | json }},
+    "url": {{ home_url | json }},
+    {%- if settings.seo_home_description != blank -%}"description": {{ settings.seo_home_description | json }},{%- endif -%}
+    {%- if logo_url != blank -%}"logo": {{ logo_url | json }},{%- endif -%}
+    {%- if same_as.size > 0 -%}"sameAs": {{ same_as | json }},{%- endif -%}
+    {%- if shop.email != blank -%}
+      "contactPoint": { "@type": "ContactPoint", "contactType": "customer service", "email": {{ shop.email | json }}, "areaServed": "IN", "availableLanguage": "en" },
+    {%- endif -%}
+    "areaServed": { "@type": "Country", "name": "India" },
+    "currenciesAccepted": {{ currency | json }},
+    "hasMerchantReturnPolicy": {{ return_policy }}
+  }
+</script>
 
 {%- if request.page_type == 'index' -%}
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": {{ shop.name | json }},
-      "url": {{ home_url | json }}
-      {%- if logo_url != blank -%},"logo": {{ logo_url | json }}{%- endif -%}
-      {%- if same_as.size > 0 -%},"sameAs": {{ same_as | json }}{%- endif -%}
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": {{ shop.name | json }},
+      "name": {{ brand | json }},
       "url": {{ home_url | json }},
+      "publisher": { "@id": {{ org_id | json }} },
+      "inLanguage": {{ request.locale.iso_code | json }},
       "potentialAction": {
         "@type": "SearchAction",
-        "target": {{ request.origin | append: routes.search_url | append: '?q={search_term_string}' | json }},
+        "target": {{ search_target | json }},
         "query-input": "required name=search_term_string"
       }
     }
@@ -94,6 +150,23 @@
       assign description = product.title
     endif
     assign selected = product.selected_or_first_available_variant
+    assign product_brand = product.vendor | replace: '&amp;', '&' | default: brand
+
+    # Breadcrumb goes through the collection the shopper came from, else the all-products page.
+    assign crumb_name = 'Shop'
+    assign crumb_url = request.origin | append: routes.all_products_collection_url
+    if collection
+      assign crumb_name = collection.title
+      assign crumb_url = request.origin | append: collection.url
+    elsif product.collections.size > 0
+      assign crumb_name = product.collections.first.title
+      assign crumb_url = request.origin | append: product.collections.first.url
+    endif
+
+    assign shipping_rate = settings.seo_shipping_rate | default: 0
+    assign free_over = settings.seo_free_shipping_over | default: 0
+    assign handling_days = settings.seo_handling_days | default: 2
+    assign transit_days = settings.seo_transit_days | default: 7
   -%}
   <script type="application/ld+json">
     {
@@ -109,21 +182,44 @@
         ],
       {%- endif -%}
       "description": {{ description | json }},
+      {%- if product.type != blank -%}"category": {{ product.type | json }},{%- endif -%}
       {%- if selected.sku != blank -%}"sku": {{ selected.sku | json }},{%- endif -%}
       {%- if selected.barcode != blank -%}"gtin": {{ selected.barcode | json }},{%- endif -%}
-      "brand": { "@type": "Brand", "name": {{ product.vendor | default: shop.name | json }} },
+      "brand": { "@type": "Brand", "name": {{ product_brand | json }} },
+      "audience": { "@type": "PeopleAudience", "suggestedMinAge": 0, "suggestedMaxAge": 2 },
       "offers": [
         {%- for variant in product.variants -%}
+          {%- liquid
+            assign variant_rate = shipping_rate
+            if free_over > 0
+              assign free_over_paise = free_over | times: 100
+              if variant.price >= free_over_paise
+                assign variant_rate = 0
+              endif
+            endif
+          -%}
           {
             "@type": "Offer",
             {%- if variant.sku != blank -%}"sku": {{ variant.sku | json }},{%- endif -%}
+            {%- if variant.barcode != blank -%}"gtin": {{ variant.barcode | json }},{%- endif -%}
             {%- if variant.title != 'Default Title' -%}"name": {{ product.title | append: ' - ' | append: variant.title | json }},{%- endif -%}
             "availability": "https://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
             "itemCondition": "https://schema.org/NewCondition",
             "price": {{ variant.price | divided_by: 100.0 | json }},
-            "priceCurrency": {{ cart.currency.iso_code | json }},
+            "priceCurrency": {{ currency | json }},
             "url": {{ request.origin | append: variant.url | json }},
-            "seller": { "@type": "Organization", "name": {{ shop.name | json }} }
+            "seller": { "@id": {{ org_id | json }} },
+            "shippingDetails": {
+              "@type": "OfferShippingDetails",
+              "shippingRate": { "@type": "MonetaryAmount", "value": {{ variant_rate }}, "currency": {{ currency | json }} },
+              "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "IN" },
+              "deliveryTime": {
+                "@type": "ShippingDeliveryTime",
+                "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": {{ handling_days }}, "unitCode": "DAY" },
+                "transitTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": {{ transit_days }}, "unitCode": "DAY" }
+              }
+            },
+            "hasMerchantReturnPolicy": {{ return_policy }}
           }{% unless forloop.last %},{% endunless %}
         {%- endfor -%}
       ]
@@ -135,7 +231,7 @@
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ home_url | json }} },
-        { "@type": "ListItem", "position": 2, "name": "Shop", "item": {{ request.origin | append: routes.all_products_collection_url | json }} },
+        { "@type": "ListItem", "position": 2, "name": {{ crumb_name | json }}, "item": {{ crumb_url | json }} },
         { "@type": "ListItem", "position": 3, "name": {{ product.title | json }}, "item": {{ request.origin | append: product.url | json }} }
       ]
     }
@@ -143,14 +239,59 @@
 {%- endif -%}
 
 {%- if request.page_type == 'collection' and collection -%}
+  {%- liquid
+    assign collection_name = seo_title | default: collection.title
+    assign collection_url = request.origin | append: collection.url
+  -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": {{ collection_name | json }},
+      "url": {{ collection_url | json }},
+      {%- if og_description != blank -%}"description": {{ og_description | json }},{%- endif -%}
+      "isPartOf": { "@type": "WebSite", "name": {{ brand | json }}, "url": {{ home_url | json }} },
+      "mainEntity": {
+        "@type": "ItemList",
+        "numberOfItems": {{ collection.products_count }},
+        "itemListElement": [
+          {%- for item in collection.products limit: 24 -%}
+            { "@type": "ListItem", "position": {{ forloop.index }}, "url": {{ request.origin | append: item.url | json }}, "name": {{ item.title | json }} }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      }
+    }
+  </script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ home_url | json }} },
-        { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ request.origin | append: collection.url | json }} }
+        { "@type": "ListItem", "position": 2, "name": {{ collection_name | json }}, "item": {{ collection_url | json }} }
       ]
+    }
+  </script>
+{%- endif -%}
+
+{%- if request.page_type == 'page' and page -%}
+  {%- liquid
+    assign page_type = 'WebPage'
+    if page.handle == 'about' or page.handle == 'our-world'
+      assign page_type = 'AboutPage'
+    elsif page.handle == 'contact'
+      assign page_type = 'ContactPage'
+    endif
+  -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": {{ page_type | json }},
+      "name": {{ page.title | json }},
+      "url": {{ request.origin | append: page.url | json }},
+      {%- if og_description != blank -%}"description": {{ og_description | json }},{%- endif -%}
+      "about": { "@id": {{ org_id | json }} },
+      "isPartOf": { "@type": "WebSite", "name": {{ brand | json }}, "url": {{ home_url | json }} }
     }
   </script>
 {%- endif -%}
@@ -163,10 +304,11 @@
       "headline": {{ article.title | truncate: 110 | json }},
       "url": {{ request.origin | append: article.url | json }},
       {%- if article.image -%}"image": [{{ article.image | image_url: width: 1200 | prepend: 'https:' | json }}],{%- endif -%}
+      {%- if article.excerpt_or_content != blank -%}"description": {{ article.excerpt_or_content | strip_html | strip_newlines | truncate: 300 | json }},{%- endif -%}
       "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
       "dateModified": {{ article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
       "author": { "@type": "Person", "name": {{ article.author | json }} },
-      "publisher": { "@type": "Organization", "name": {{ shop.name | json }}{% if logo_url != blank %}, "logo": { "@type": "ImageObject", "url": {{ logo_url | json }} }{% endif %} }
+      "publisher": { "@id": {{ org_id | json }} }
     }
   </script>
 {%- endif -%}

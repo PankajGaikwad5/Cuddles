@@ -12,7 +12,6 @@
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}"{% if coming_soon %} class="is-coming-soon"{% endif %}>
   <head>
-    <meta name="google-site-verification" content="ut9hujdiE-ill-uRZAO38cs_qDRLX9JXI3bIGDGk_ok" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="google-site-verification" content="QRrsQ9gNT8f4tbhR9XI0yyxNIwnc2OlmbNxRVgCdNHI">
@@ -20,19 +19,43 @@
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
     {%- endif -%}
+    {%- liquid
+      # shop.name comes HTML-escaped (&amp;) while page_title doesn't, so compare against both.
+      assign brand = shop.name | replace: '&amp;', '&'
+      assign seo_title = page_title
+      assign seo_description = page_description | strip_html | strip
+      if request.page_type == 'index'
+        if page_title == brand or page_title == shop.name
+          assign seo_title = settings.seo_home_title | default: page_title
+        endif
+        if seo_description == blank or seo_description == brand or seo_description == shop.name
+          assign seo_description = settings.seo_home_description
+        endif
+      elsif request.page_type == 'collection' and collection
+        if collection.handle == 'all' and page_title == 'Products'
+          assign seo_title = settings.seo_all_title | default: page_title
+        endif
+        if seo_description == blank
+          assign seo_description = settings.seo_collection_description | replace: '[collection]', collection.title
+        endif
+      endif
+      if seo_description == blank
+        assign seo_description = settings.seo_home_description
+      endif
+    -%}
     <title>
-      {{- page_title -}}
+      {{- seo_title -}}
       {%- if current_tags %} &ndash; {{ current_tags | join: ', ' }}{% endif -%}
       {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+      {%- unless seo_title contains brand or seo_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
     </title>
-    {%- if page_description -%}
-      <meta name="description" content="{{ page_description | escape }}">
+    {%- if seo_description != blank -%}
+      <meta name="description" content="{{ seo_description | truncate: 300 | escape }}">
     {%- endif -%}
     {%- if request.page_type == 'cart' or request.page_type == 'search' or request.page_type contains 'customers/' -%}
       <meta name="robots" content="noindex, follow">
     {%- endif -%}
-    {% render 'meta-tags' %}
+    {% render 'meta-tags', seo_title: seo_title, seo_description: seo_description %}
 
     {% render 'font-face' %}
 

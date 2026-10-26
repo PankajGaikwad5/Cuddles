@@ -25,10 +25,20 @@
     "cart_type": "drawer",
     "gift_box_product": "gift-box",
     "shop_path": "/shop",
-    "social_instagram": "https://instagram.com",
-    "social_pinterest": "https://pinterest.com",
-    "social_youtube": "https://youtube.com",
+    "social_instagram": "https://www.instagram.com/cuddlesbymia.in/",
+    "social_pinterest": "https://www.pinterest.com/cuddlesbymia",
+    "social_youtube": "https://www.youtube.com/@cuddlesbymiaco",
     "social_facebook": "",
+    "seo_home_heading": "Baby clothes, swaddles and newborn essentials for 0–24 months",
+    "seo_home_title": "Cuddles by Mia & Co. | Baby Clothes & Swaddles India",
+    "seo_home_description": "Soft, comfortable baby clothes and essentials for 0–24 months: swaddles, rompers, dresses, co-ord sets, sleeping bags and muslin towels. Delivered across India.",
+    "seo_all_title": "Shop All Baby Clothes & Essentials",
+    "seo_collection_description": "Shop [collection] for babies aged 0–24 months at Cuddles by Mia & Co. Soft, breathable pieces, free shipping over ₹2,999 and delivery across India.",
+    "seo_shipping_rate": 99,
+    "seo_free_shipping_over": 2999,
+    "seo_handling_days": 2,
+    "seo_transit_days": 7,
+    "seo_return_days": 7,
     "sections": {
       "header": {
         "type": "header",
@@ -120,7 +130,7 @@
             "type": "links",
             "settings": {
               "heading": "Shop",
-              "links": "Shop | /shop\nCollections | /collections\nSearch | /search"
+              "links": "Shop | /shop\nCollections | /collections\nSearch | /search\nSitemap | /pages/sitemap"
             }
           },
           "links-help": {
@@ -142,7 +152,7 @@
           "show_policies": true,
           "social_instagram": "https://www.instagram.com/cuddlesbymia.in/",
           "social_facebook": "",
-          "social_pinterest": "www.pinterest.com/cuddlesbymia",
+          "social_pinterest": "https://www.pinterest.com/cuddlesbymia",
           "social_youtube": "https://youtube.com/@cuddlesbymiaco?si=vxio5qGiUh5u7XtJ"
         }
       }
