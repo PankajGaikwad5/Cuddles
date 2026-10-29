@@ -1,20 +1,47 @@
+{%- liquid
+  assign word_count = article.content | strip_html | split: ' ' | size
+  assign read_minutes = word_count | divided_by: 200.0 | ceil
+  if read_minutes < 1
+    assign read_minutes = 1
+  endif
+-%}
+{%- capture blogs_href -%}{% render 'link-href', url: '/blogs' %}{%- endcapture -%}
+{%- if blogs_href == '/blogs' -%}{%- assign blogs_href = blog.url -%}{%- endif -%}
+
 <article class="article">
   <header class="article__head">
-    <p class="collection__crumb"><a href="{{ blog.url }}">{{ blog.title }}</a></p>
-    <h1 class="collection__title">{{ article.title }}</h1>
+    <p class="article__crumb"><a href="{{ blogs_href }}">{{ section.settings.crumb_label | default: 'Blogs' }}</a></p>
+    <h1 class="article__title">{{ article.title }}</h1>
     <p class="article__meta">
-      {{ article.published_at | date: '%d %B %Y' }}
-      {%- if section.settings.show_author %} · {{ article.author }}{% endif -%}
+      <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d %B %Y' }}</time>
+      {%- if section.settings.show_author %}<span aria-hidden="true">·</span>{{ article.author }}{% endif -%}
+      <span aria-hidden="true">·</span>{{ read_minutes }} min read
     </p>
   </header>
 
   {%- if article.image -%}
-    <div class="article__image">
-      {{ article.image | image_url: width: 2000 | image_tag: loading: 'eager', alt: article.title, sizes: '100vw' }}
-    </div>
+    {%- assign focal = article.image.presentation.focal_point | default: 'center' | prepend: 'object-position: ' -%}
+    {%- assign image_alt = article.image.alt | default: article.title -%}
+    <figure class="article__image">
+      {{ article.image | image_url: width: 2000 | image_tag: loading: 'eager', fetchpriority: 'high', alt: image_alt, sizes: '(min-width: 1100px) 1040px, 100vw', style: focal }}
+    </figure>
   {%- endif -%}
 
   <div class="rte article__content">{{ article.content }}</div>
+
+  <footer class="article__foot">
+    {%- if article.tags.size > 0 -%}
+      <ul class="article__tags">
+        {%- for tag in article.tags -%}<li>{{ tag }}</li>{%- endfor -%}
+      </ul>
+    {%- endif -%}
+    <div class="article__actions">
+      <a href="{{ blogs_href }}" class="button-outline">Back to {{ section.settings.crumb_label | default: 'Blogs' }}</a>
+      {%- if section.settings.cta_label != blank -%}
+        <a href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}" class="button-solid">{{ section.settings.cta_label }}</a>
+      {%- endif -%}
+    </div>
+  </footer>
 
   {%- if blog.comments_enabled? -%}
     <div class="article__comments">
@@ -57,7 +84,10 @@
 {
   "name": "Article",
   "settings": [
-    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true }
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
+    { "type": "text", "id": "crumb_label", "label": "Link back label", "default": "Blogs" },
+    { "type": "text", "id": "cta_label", "label": "Shop button label", "default": "Shop the collection" },
+    { "type": "url", "id": "cta_link", "label": "Shop button link" }
   ]
 }
 {% endschema %}

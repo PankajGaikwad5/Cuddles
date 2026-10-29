@@ -38,7 +38,8 @@
               {%- when 'video', 'external_video' -%}
                 {{ media | media_tag: autoplay: false, loop: true, muted: true, controls: true }}
               {%- else -%}
-                {{ media.preview_image | image_url: width: 1800 | image_tag: loading: loading, alt: media.alt | default: product.title, sizes: '(min-width: 990px) 50vw, 100vw' }}
+                {%- assign media_alt = media.alt | default: product.title -%}
+                {{ media.preview_image | image_url: width: 1800 | image_tag: loading: loading, alt: media_alt, sizes: '(min-width: 990px) 50vw, 100vw' }}
             {%- endcase -%}
           </figure>
         {%- else -%}
