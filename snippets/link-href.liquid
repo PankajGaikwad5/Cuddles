@@ -5,12 +5,17 @@
   - /pages/about falls back to the theme's built-in About page (/?view=about) until an
     "About" page exists in Online Store > Pages. Likewise /pages/sitemap falls back to
     /sitemap.xml and /pages/llms to Shopify's /llms.txt.
+  - /blogs opens the blog picked in Theme settings > Shop page, whatever its handle.
   Usage: {%- capture href -%}{% render 'link-href', url: url %}{%- endcapture -%}
 {%- endcomment -%}
 {%- liquid
   assign href = url | strip
   if settings.shop_path != blank and href == settings.shop_path
     assign href = routes.all_products_collection_url
+  elsif href == '/blogs' or href == '/blogs/'
+    if settings.main_blog != blank and settings.main_blog.url != blank
+      assign href = settings.main_blog.url
+    endif
   elsif href contains '/pages/'
     assign page_handle = href | split: '/pages/' | last | split: '?' | first | split: '#' | first
     if pages[page_handle].url == blank

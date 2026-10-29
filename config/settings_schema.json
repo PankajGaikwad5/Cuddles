@@ -203,6 +203,12 @@
         "label": "Address shown for all products",
         "default": "/shop",
         "info": "Also create a URL redirect from this path to /collections/all (Online Store > Navigation > URL redirects). Leave empty to show /collections/all."
+      },
+      {
+        "type": "blog",
+        "id": "main_blog",
+        "label": "Blog for \"Blogs\" links",
+        "info": "Menu and footer links to /blogs open this blog."
       }
     ]
   },

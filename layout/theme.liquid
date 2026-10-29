@@ -31,6 +31,8 @@
         if seo_description == blank or seo_description == brand or seo_description == shop.name
           assign seo_description = settings.seo_home_description
         endif
+      elsif request.page_type == 'blog' and blog.handle == settings.main_blog.handle
+        assign seo_title = 'Blogs'
       elsif request.page_type == 'collection' and collection
         if collection.handle == 'all' and page_title == 'Products'
           assign seo_title = settings.seo_all_title | default: page_title
@@ -54,7 +56,7 @@
       {%- unless seo_title contains brand or seo_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
     </title>
     {%- if seo_description != blank -%}
-      <meta name="description" content="{{ seo_description | truncate: 300 | escape }}">
+      <meta name="description" content="{{ seo_description | truncate: 300 | escape_once }}">
     {%- endif -%}
     {%- if request.page_type == 'cart' or request.page_type == 'search' or request.page_type contains 'customers/' -%}
       <meta name="robots" content="noindex, follow">

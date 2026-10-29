@@ -37,7 +37,7 @@
         {%- endfor -%}
       </ul>
 
-      {%- assign blog = blogs[section.settings.blog] -%}
+      {%- assign blog = blogs[section.settings.blog] | default: settings.main_blog -%}
       {%- if blog.articles_count > 0 -%}
         <h2 class="sitemap__heading">{{ blog.title }}</h2>
         <ul class="sitemap__list">
@@ -72,7 +72,7 @@
       "info": "One per line: Label | /pages/handle",
       "default": "About | /pages/about\nOur World | /pages/our-world\nFAQ | /pages/faq\nShipping & Returns | /pages/shipping-returns\nContact | /pages/contact\nBrand profile for AI assistants | /pages/llms"
     },
-    { "type": "text", "id": "blog", "label": "Blog handle", "default": "news" }
+    { "type": "text", "id": "blog", "label": "Blog handle", "info": "Leave empty to use the blog from Theme settings > Shop page." }
   ]
 }
 {% endschema %}

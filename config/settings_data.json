@@ -25,6 +25,7 @@
     "cart_type": "drawer",
     "gift_box_product": "gift-box",
     "shop_path": "/shop",
+    "main_blog": "newborn-baby-essentials-checklist-everything-you-actually-need",
     "social_instagram": "https://www.instagram.com/cuddlesbymia.in/",
     "social_pinterest": "https://www.pinterest.com/cuddlesbymia",
     "social_youtube": "https://www.youtube.com/@cuddlesbymiaco",
@@ -137,7 +138,7 @@
             "type": "links",
             "settings": {
               "heading": "Quick links",
-              "links": "Blogs | /blogs/news\nContact | /pages/contact\nMy account | /account"
+              "links": "Blogs | /blogs\nContact | /pages/contact\nMy account | /account"
             }
           }
         },
