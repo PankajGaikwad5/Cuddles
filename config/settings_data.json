@@ -25,11 +25,7 @@
     "cart_type": "drawer",
     "gift_box_product": "gift-box",
     "shop_path": "/shop",
-    "main_blog": "newborn-baby-essentials-checklist-everything-you-actually-need",
-    "social_instagram": "https://www.instagram.com/cuddlesbymia.in/",
-    "social_pinterest": "https://www.pinterest.com/cuddlesbymia",
-    "social_youtube": "https://www.youtube.com/@cuddlesbymiaco",
-    "social_facebook": "",
+    "main_blog": "blogs",
     "seo_home_heading": "Baby clothes, swaddles and newborn essentials for 0–24 months",
     "seo_home_title": "Cuddles by Mia & Co. | Baby Clothes & Swaddles India",
     "seo_home_description": "Soft, comfortable baby clothes and essentials for 0–24 months: swaddles, rompers, dresses, co-ord sets, sleeping bags and muslin towels. Delivered across India.",
@@ -40,6 +36,10 @@
     "seo_handling_days": 2,
     "seo_transit_days": 7,
     "seo_return_days": 7,
+    "social_instagram": "https://www.instagram.com/cuddlesbymia.in/",
+    "social_pinterest": "https://www.pinterest.com/cuddlesbymia",
+    "social_youtube": "https://www.youtube.com/@cuddlesbymiaco",
+    "social_facebook": "",
     "sections": {
       "header": {
         "type": "header",
