@@ -1,0 +1,17 @@
+{%- comment -%}
+  One blog post card. Used by the blog listing.
+  Usage: {% render 'article-card', article: article %}
+{%- endcomment -%}
+<a href="{{ article.url }}" class="article-card">
+  {%- if article.image -%}
+    <div class="article-card__media">
+      {{ article.image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: article.title, sizes: '(min-width: 990px) 33vw, 100vw' }}
+    </div>
+  {%- endif -%}
+  <p class="article-card__date">{{ article.published_at | date: '%d %B %Y' }}</p>
+  <h2 class="article-card__title">{{ article.title }}</h2>
+  <p class="article-card__excerpt">
+    {%- if article.excerpt != blank -%}{{ article.excerpt | strip_html | truncatewords: 26 }}{%- else -%}{{ article.content | strip_html | truncatewords: 26 }}{%- endif -%}
+  </p>
+  <span class="story__link">Read more</span>
+</a>

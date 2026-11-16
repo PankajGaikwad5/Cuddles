@@ -1,6 +1,6 @@
 {
   "sections": {
-    "main": { "type": "main-blog", "settings": { "heading": "Blogs" } }
+    "main": { "type": "main-blog", "settings": { "heading": "Blogs", "all_blogs": true } }
   },
   "order": ["main"]
 }

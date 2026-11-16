@@ -1,7 +1,25 @@
+{%- liquid
+  comment
+    Normally we list the articles of the blog being viewed. When "Show posts from
+    every blog" is on, we gather articles from all blogs on the store, newest first,
+    so one page shows everything. Tag filtering always stays scoped to one blog.
+  endcomment
+  assign posts = blog.articles
+  assign aggregated = false
+  if section.settings.all_blogs and current_tags == blank
+    assign posts = '' | split: ''
+    for other_blog in blogs
+      assign posts = posts | concat: other_blog.articles
+    endfor
+    assign posts = posts | sort: 'published_at' | reverse
+    assign aggregated = true
+  endif
+-%}
+
 <section class="collection">
   <header class="collection__hero">
     <h1 class="collection__title">{{ section.settings.heading | default: blog.title }}</h1>
-    {%- if blog.all_tags.size > 0 -%}
+    {%- if blog.all_tags.size > 0 and aggregated == false -%}
       <ul class="blog-tags">
         <li><a href="{{ blog.url }}" {% unless current_tags %}class="is-active"{% endunless %}>All</a></li>
         {%- for tag in blog.all_tags -%}
@@ -13,7 +31,7 @@
     {%- endif -%}
   </header>
 
-  {%- if blog.articles_count == 0 -%}
+  {%- if posts.size == 0 -%}
     <div class="blog-empty">
       <p class="simple-page__eyebrow">{{ section.settings.empty_eyebrow }}</p>
       <h2 class="faq__heading">{{ section.settings.empty_heading }}</h2>
@@ -22,26 +40,22 @@
     </div>
   {%- endif -%}
 
-  {%- paginate blog.articles by section.settings.per_page -%}
+  {%- if aggregated -%}
     <div class="article-grid">
-      {%- for article in blog.articles -%}
-        <a href="{{ article.url }}" class="article-card">
-          <div class="article-card__media">
-            {%- if article.image -%}
-              {{ article.image | image_url: width: 1200 | image_tag: loading: 'lazy', alt: article.title, sizes: '(min-width: 990px) 33vw, 100vw' }}
-            {%- endif -%}
-          </div>
-          <p class="article-card__date">{{ article.published_at | date: '%d %B %Y' }}</p>
-          <h2 class="article-card__title">{{ article.title }}</h2>
-          <p class="article-card__excerpt">
-            {%- if article.excerpt != blank -%}{{ article.excerpt | strip_html | truncatewords: 26 }}{%- else -%}{{ article.content | strip_html | truncatewords: 26 }}{%- endif -%}
-          </p>
-          <span class="story__link">Read more</span>
-        </a>
+      {%- for article in posts -%}
+        {% render 'article-card', article: article %}
       {%- endfor -%}
     </div>
-    {% render 'pagination', paginate: paginate %}
-  {%- endpaginate -%}
+  {%- else -%}
+    {%- paginate blog.articles by section.settings.per_page -%}
+      <div class="article-grid">
+        {%- for article in blog.articles -%}
+          {% render 'article-card', article: article %}
+        {%- endfor -%}
+      </div>
+      {% render 'pagination', paginate: paginate %}
+    {%- endpaginate -%}
+  {%- endif -%}
 </section>
 
 {% schema %}
@@ -49,7 +63,8 @@
   "name": "Blog",
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "info": "Leave empty to show the blog's own name.", "default": "Blogs" },
-    { "type": "range", "id": "per_page", "label": "Articles per page", "min": 3, "max": 24, "step": 3, "default": 9 },
+    { "type": "checkbox", "id": "all_blogs", "label": "Show posts from every blog", "info": "On: this page lists posts from all blogs on the store, newest first. Off: only posts from the blog being viewed.", "default": true },
+    { "type": "range", "id": "per_page", "label": "Articles per page", "min": 3, "max": 24, "step": 3, "default": 9, "info": "Only applies when \"Show posts from every blog\" is off." },
     { "type": "header", "content": "When there are no posts yet" },
     { "type": "text", "id": "empty_eyebrow", "label": "Eyebrow", "default": "Coming soon" },
     { "type": "text", "id": "empty_heading", "label": "Heading", "default": "Stories from our world" },
