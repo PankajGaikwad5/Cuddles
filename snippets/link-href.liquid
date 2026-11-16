@@ -13,8 +13,30 @@
   if settings.shop_path != blank and href == settings.shop_path
     assign href = routes.all_products_collection_url
   elsif href == '/blogs' or href == '/blogs/'
+    comment
+      Shopify has no bare /blogs route, so this must always resolve to a real blog.
+      Prefer the blog picked in theme settings; if that setting is empty or points at
+      a deleted blog, fall back to the first blog that has posts, then to any blog.
+    endcomment
+    assign blog_href = ''
     if settings.main_blog != blank and settings.main_blog.url != blank
-      assign href = settings.main_blog.url
+      assign blog_href = settings.main_blog.url
+    endif
+    if blog_href == blank
+      for fallback_blog in blogs
+        if fallback_blog.articles_count > 0
+          assign blog_href = fallback_blog.url
+          break
+        endif
+      endfor
+    endif
+    if blog_href == blank
+      for fallback_blog in blogs limit: 1
+        assign blog_href = fallback_blog.url
+      endfor
+    endif
+    if blog_href != blank
+      assign href = blog_href
     endif
   elsif href contains '/pages/'
     assign page_handle = href | split: '/pages/' | last | split: '?' | first | split: '#' | first
