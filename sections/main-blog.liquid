@@ -1,18 +1,41 @@
 {%- liquid
   comment
     Normally we list the articles of the blog being viewed. When "Show posts from
-    every blog" is on, we gather articles from all blogs on the store, newest first,
-    so one page shows everything. Tag filtering always stays scoped to one blog.
+    every blog" is on, we list every blog's articles on one page, with the blogs
+    ordered by their newest post. Tag filtering always stays scoped to one blog.
+
+    Note: we never build an array of articles with `concat`. blog.articles is a lazy
+    drop, not a true array, so concat silently produces an empty list. We only ever
+    loop it directly, and order blogs via a plain array of strings, which is safe.
   endcomment
-  assign posts = blog.articles
+
   assign aggregated = false
+  assign total_posts = blog.articles_count
+
   if section.settings.all_blogs and current_tags == blank
-    assign posts = '' | split: ''
+    assign total_posts = 0
+    assign keys_raw = ''
     for other_blog in blogs
-      assign posts = posts | concat: other_blog.articles
+      if other_blog.articles_count > 0
+        assign total_posts = total_posts | plus: other_blog.articles_count
+        assign newest = ''
+        for newest_article in other_blog.articles limit: 1
+          assign newest = newest_article.published_at | date: '%s'
+        endfor
+        assign keys_raw = keys_raw | append: newest | append: '|' | append: other_blog.handle | append: '~~'
+      endif
     endfor
-    assign posts = posts | sort: 'published_at' | reverse
-    assign aggregated = true
+    assign blog_keys = keys_raw | split: '~~' | sort | reverse
+
+    comment
+      Only switch to the combined list if we actually found posts this way; otherwise
+      fall back to the normal single-blog listing so the page is never empty.
+    endcomment
+    if total_posts > 0
+      assign aggregated = true
+    else
+      assign total_posts = blog.articles_count
+    endif
   endif
 -%}
 
@@ -31,7 +54,7 @@
     {%- endif -%}
   </header>
 
-  {%- if posts.size == 0 -%}
+  {%- if total_posts == 0 -%}
     <div class="blog-empty">
       <p class="simple-page__eyebrow">{{ section.settings.empty_eyebrow }}</p>
       <h2 class="faq__heading">{{ section.settings.empty_heading }}</h2>
@@ -40,13 +63,28 @@
     </div>
   {%- endif -%}
 
+  {%- comment -%}
+    Build the combined grid into a buffer first. If it somehow came out empty (a blog
+    handle that won't resolve, say), drop back to the normal single-blog listing
+    rather than showing the visitor a blank page.
+  {%- endcomment -%}
   {%- if aggregated -%}
-    <div class="article-grid">
-      {%- for article in posts -%}
-        {% render 'article-card', article: article %}
+    {%- capture grid_html -%}
+      {%- for blog_key in blog_keys -%}
+        {%- assign blog_handle = blog_key | split: '|' | last -%}
+        {%- for article in blogs[blog_handle].articles -%}
+          {% render 'article-card', article: article %}
+        {%- endfor -%}
       {%- endfor -%}
-    </div>
-  {%- else -%}
+    {%- endcapture -%}
+    {%- if grid_html contains 'article-card' -%}
+      <div class="article-grid">{{ grid_html }}</div>
+    {%- else -%}
+      {%- assign aggregated = false -%}
+    {%- endif -%}
+  {%- endif -%}
+
+  {%- unless aggregated -%}
     {%- paginate blog.articles by section.settings.per_page -%}
       <div class="article-grid">
         {%- for article in blog.articles -%}
@@ -55,7 +93,7 @@
       </div>
       {% render 'pagination', paginate: paginate %}
     {%- endpaginate -%}
-  {%- endif -%}
+  {%- endunless -%}
 </section>
 
 {% schema %}
