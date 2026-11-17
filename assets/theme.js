@@ -653,9 +653,9 @@
 
   /* ---------------- Collection filters & sorting ---------------- */
   $$('[data-filter-form]').forEach((form) => {
-    const drawer = makeDrawer($('[data-filter-drawer]', form));
+    const drawerEl = $('[data-filter-drawer]', form);
+    const drawer = makeDrawer(drawerEl);
     const openBtn = $('[data-filter-open]', form);
-    if (openBtn && drawer) openBtn.addEventListener('click', () => drawer.open());
 
     let timer;
     const apply = () => {
@@ -665,11 +665,49 @@
       }
       window.location.href = `${form.getAttribute('action')}?${params.toString()}`;
     };
+
+    // What the page is actually filtered by right now, so dismissing the
+    // drawer drops unapplied ticks instead of leaving the UI lying.
+    const inputs = drawerEl ? $$('[data-filter-input]', drawerEl) : [];
+    const snapshot = () => inputs.map((i) => (i.type === 'checkbox' ? i.checked : i.value));
+    let applied = snapshot();
+    const restore = () => inputs.forEach((i, n) => {
+      if (i.type === 'checkbox') i.checked = applied[n];
+      else i.value = applied[n];
+    });
+
+    if (openBtn && drawer) {
+      openBtn.addEventListener('click', () => {
+        applied = snapshot();
+        drawer.open();
+      });
+    }
+
+    // Inside the drawer nothing navigates until Apply - the whole point is to
+    // pick several ages at once. Outside it (the sort select) still applies
+    // immediately.
     form.addEventListener('change', (e) => {
       if (!e.target.matches('[data-filter-input]')) return;
+      if (drawerEl && drawerEl.contains(e.target)) return;
       clearTimeout(timer);
       timer = setTimeout(apply, e.target.type === 'number' ? 700 : 50);
     });
+
+    form.addEventListener('click', (e) => {
+      if (e.target.closest('[data-filter-apply]')) {
+        e.preventDefault();
+        apply();
+        return;
+      }
+      // X or overlay: close without applying, so drop the unapplied ticks.
+      if (e.target.closest('[data-filter-close]')) restore();
+    });
+
+    // Escape closes the drawer via makeDrawer; revert there too.
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && drawer && drawer.isOpen()) restore();
+    });
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       apply();
