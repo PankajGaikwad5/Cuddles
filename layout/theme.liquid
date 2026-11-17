@@ -98,10 +98,13 @@
       };
     </script>
 
+    {% render 'meta-pixel' %}
+
     {{ content_for_header }}
   </head>
 
   <body class="template-{{ template.name }}{% if template.suffix != blank %}--{{ template.suffix }}{% endif %}">
+    {% render 'meta-pixel', part: 'noscript' %}
     {%- if coming_soon -%}{% render 'coming-soon', launch: settings.coming_soon_launch %}{%- endif -%}
     <a class="skip-link" href="#MainContent">Skip to content</a>
     {% section 'header' %}
