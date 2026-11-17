@@ -71,20 +71,7 @@
                         </label>
                       </div>
                     {%- else -%}
-                      <ul class="filter-list">
-                        {%- for value in filter.values -%}
-                          <li>
-                            <label class="filter-check{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
-                              <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" data-filter-input
-                                {% if value.active %}checked{% endif %}
-                                {% if value.count == 0 and value.active == false %}disabled{% endif %}>
-                              <span class="filter-check__box" aria-hidden="true"></span>
-                              <span>{{ value.label }}</span>
-                              <span class="filter-check__count">{{ value.count }}</span>
-                            </label>
-                          </li>
-                        {%- endfor -%}
-                      </ul>
+                      {% render 'filter-values', filter: filter %}
                   {%- endcase -%}
                 </div>
               </details>

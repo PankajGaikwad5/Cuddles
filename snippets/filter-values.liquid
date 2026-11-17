@@ -1,0 +1,70 @@
+{%- comment -%}
+  The value list for one storefront filter group.
+
+  The "Age" filter (product metafield custom.age) is rendered in real-world
+  order — months ascending, then years — because Shopify returns filter values
+  alphabetically, which reads as: 0-3 months, 1 year, 12-18 months, 2 years...
+
+  Any value not in age_order still renders, appended in Shopify's own order, so
+  an unexpected value is never silently dropped.
+
+  Accepts: filter
+{%- endcomment -%}
+{%- liquid
+  assign age_order = '0-3 months,3-6 months,6-9 months,9-12 months,12-18 months,18-24 months,1 year,2 years,3 years,4 years,5 years' | split: ','
+
+  assign is_age = false
+  assign filter_label = filter.label | downcase | strip
+  if filter_label == 'age'
+    assign is_age = true
+  elsif filter.param_name contains 'custom.age'
+    assign is_age = true
+  endif
+-%}
+
+<ul class="filter-list">
+  {%- if is_age -%}
+    {%- liquid
+      assign placed = ''
+      assign months_shown = 0
+      assign years_shown = 0
+      for value in filter.values
+        assign vl = value.label | downcase | strip
+        if age_order contains vl
+          if vl contains 'month'
+            assign months_shown = months_shown | plus: 1
+          else
+            assign years_shown = years_shown | plus: 1
+          endif
+        endif
+      endfor
+      assign divider_done = false
+    -%}
+
+    {%- for name in age_order -%}
+      {%- for value in filter.values -%}
+        {%- assign vl = value.label | downcase | strip -%}
+        {%- if vl == name -%}
+          {%- if name contains 'year' and divider_done == false and months_shown > 0 and years_shown > 0 -%}
+            <li class="filter-list__divider" role="presentation"></li>
+            {%- assign divider_done = true -%}
+          {%- endif -%}
+          {% render 'filter-value', value: value %}
+          {%- assign placed = placed | append: '|' | append: vl -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+
+    {%- for value in filter.values -%}
+      {%- assign vl = value.label | downcase | strip -%}
+      {%- assign probe = '|' | append: vl -%}
+      {%- unless placed contains probe -%}
+        {% render 'filter-value', value: value %}
+      {%- endunless -%}
+    {%- endfor -%}
+  {%- else -%}
+    {%- for value in filter.values -%}
+      {% render 'filter-value', value: value %}
+    {%- endfor -%}
+  {%- endif -%}
+</ul>

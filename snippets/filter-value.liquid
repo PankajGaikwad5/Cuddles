@@ -1,0 +1,14 @@
+{%- comment -%}
+  One checkbox row inside a storefront filter group.
+  Accepts: value (a filter value from collection.filters)
+{%- endcomment -%}
+<li>
+  <label class="filter-check{% if value.count == 0 and value.active == false %} is-disabled{% endif %}">
+    <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" data-filter-input
+      {% if value.active %}checked{% endif %}
+      {% if value.count == 0 and value.active == false %}disabled{% endif %}>
+    <span class="filter-check__box" aria-hidden="true"></span>
+    <span>{{ value.label }}</span>
+    <span class="filter-check__count">{{ value.count }}</span>
+  </label>
+</li>
