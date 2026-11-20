@@ -430,6 +430,40 @@ a.button-solid { display: inline-flex; align-items: center; justify-content: cen
   .picks__nav { display: none; }
 }
 
+/* ---------------- Reviews ---------------- */
+.reviews { padding: clamp(56px, 7vw, 100px) clamp(16px, 3.6vw, 50px); border-top: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent); }
+.reviews__summary { display: flex; align-items: center; gap: 10px; margin: 14px 0 0; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; opacity: .75; }
+.reviews__track {
+  /* position: relative keeps the visually-hidden rating labels (position: absolute)
+     inside the scroller so they cannot stretch the page width. */
+  position: relative;
+  display: flex; gap: clamp(14px, 1.8vw, 26px); overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; scroll-behavior: smooth;
+}
+.reviews__track::-webkit-scrollbar { display: none; }
+.reviews__item {
+  display: flex; scroll-snap-align: start;
+  flex: 0 0 calc((100% - (var(--reviews-cols, 3) - 1) * clamp(14px, 1.8vw, 26px)) / var(--reviews-cols, 3));
+}
+.review-card {
+  display: flex; flex-direction: column; gap: 18px; width: 100%;
+  padding: clamp(24px, 2.4vw, 34px);
+  border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent);
+  background: color-mix(in srgb, var(--color-text) 3%, transparent);
+}
+.review-card__stars { display: inline-flex; align-items: center; gap: 4px; margin: 0; }
+.review-card__stars .icon--star { width: 13px; height: 13px; }
+.review-card__text { margin: 0; font-size: 14px; line-height: 1.85; letter-spacing: .02em; }
+.review-card__foot { margin-top: auto; }
+.review-card__name { margin: 0; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+.review-card__meta { margin: 6px 0 0; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; opacity: .6; }
+@media (max-width: 989px) {
+  .reviews__item { flex-basis: 78%; }
+}
+@media (max-width: 749px) {
+  .reviews__item { flex-basis: 86%; }
+}
+
 /* ---------------- Collapsible content / FAQ ---------------- */
 .faq { padding: clamp(36px, 4.5vw, 64px) clamp(16px, 3.6vw, 50px); }
 .faq__inner { max-width: 1100px; margin: 0 auto; }

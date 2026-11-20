@@ -388,7 +388,9 @@ async function renderTemplate(name) {
     return liquid.parseAndRender(read(`templates/${name}.liquid`), g, { globals: g });
   }
   const tpl = readJSON(`templates/${name}.json`);
-  const sections = await Promise.all(tpl.order.map((id) => renderSection(tpl.sections[id].type, tpl.sections[id], id)));
+  // Shopify skips sections the theme editor has toggled off.
+  const visible = tpl.order.filter((id) => !tpl.sections[id].disabled);
+  const sections = await Promise.all(visible.map((id) => renderSection(tpl.sections[id].type, tpl.sections[id], id)));
   const layout = tpl.layout || 'theme';
   const g = globals();
   const html = await liquid.parseAndRender(read(`layout/${layout}.liquid`), {

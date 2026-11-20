@@ -6,8 +6,7 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */
-{
+ */{
   "sections": {
     "hero": {
       "type": "hero",
@@ -227,6 +226,120 @@
         "open_first": false,
         "schema_faq": true
       }
+    },
+    "reviews": {
+      "type": "reviews",
+      "blocks": {
+        "review-1": {
+          "type": "review",
+          "settings": {
+            "name": "Jhanvi",
+            "text": "Thank you Cuddles for making her 1st birthday so special! All 3 outfits were super cute and so comfortable. Absolutely loved them! ❤️",
+            "rating": 5,
+            "meta": ""
+          }
+        },
+        "review-2": {
+          "type": "review",
+          "settings": {
+            "name": "Saachi",
+            "text": "The quality is honestly H&M level but at such affordable prices! Really impressed with the clothes.",
+            "rating": 5,
+            "meta": ""
+          }
+        },
+        "review-3": {
+          "type": "review",
+          "settings": {
+            "name": "Dhruvi",
+            "text": "Can’t wait to make her wear it on Children’s Day! It’s sooo cute, absolutely love it! 🥹💕",
+            "rating": 5,
+            "meta": ""
+          }
+        },
+        "review-4": {
+          "type": "review",
+          "settings": {
+            "name": "Jeel",
+            "text": "The red tutu dress is just perfect! It’s even cuter in person. Loved it so much! ❤️",
+            "rating": 5,
+            "meta": ""
+          }
+        },
+        "review-5": {
+          "type": "review",
+          "settings": {
+            "name": "Drashti",
+            "text": "The tutu skirt is soooo cute!! I genuinely wish they had one in my size too 😂💗",
+            "rating": 5,
+            "meta": ""
+          }
+        },
+        "review-6": {
+          "type": "review",
+          "settings": {
+            "name": "Anonymous",
+            "text": "Perfect sizing! Got it for my nephew and he absolutely loved it. Really happy with my purchase.",
+            "rating": 5,
+            "meta": ""
+          }
+        },
+        "review-7": {
+          "type": "review",
+          "settings": {
+            "name": "Venus",
+            "text": "The size is perfect and the quality of the clothes is really good. Loved everything!",
+            "rating": 5,
+            "meta": ""
+          }
+        },
+        "review-8": {
+          "type": "review",
+          "settings": {
+            "name": "Krina",
+            "text": "Such a perfect dress for my little girl! She loved wearing it and looked so adorable. ❤️",
+            "rating": 5,
+            "meta": ""
+          }
+        },
+        "review-9": {
+          "type": "review",
+          "settings": {
+            "name": "Anonymous",
+            "text": "The clothes are so soft and the designs are really cute. Everything looks just as pretty as the pictures!",
+            "rating": 5,
+            "meta": ""
+          }
+        },
+        "review-10": {
+          "type": "review",
+          "settings": {
+            "name": "Anonymous",
+            "text": "Loved the collection! The quality is really nice for the price and the outfits are super adorable. Definitely worth it!",
+            "rating": 5,
+            "meta": ""
+          }
+        }
+      },
+      "block_order": [
+        "review-1",
+        "review-2",
+        "review-3",
+        "review-4",
+        "review-5",
+        "review-6",
+        "review-7",
+        "review-8",
+        "review-9",
+        "review-10"
+      ],
+      "settings": {
+        "eyebrow": "Kind words",
+        "heading": "What parents are saying",
+        "text": "",
+        "show_summary": true,
+        "columns": 3
+      }
     }
   },
   "order": [
@@ -234,6 +347,7 @@
     "stories",
     "collections",
     "picks",
+    "reviews",
     "intro",
     "faq"
   ]
