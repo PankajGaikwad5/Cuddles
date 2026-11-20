@@ -131,7 +131,7 @@
             "type": "links",
             "settings": {
               "heading": "Shop",
-              "links": "Shop | /shop\nCollections | /collections\nSearch | /search\nSitemap | /pages/sitemap"
+              "links": "Shop | /shop\nCollections | /collections\nSearch | /search"
             }
           },
           "links-help": {
